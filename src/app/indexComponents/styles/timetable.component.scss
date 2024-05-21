@@ -1,0 +1,67 @@
+.timeTable {
+    &>.oneWorker {
+        color: #ddd;
+        background-color: #A9A9A9;
+        display: flex;
+        text-align: center;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        padding: 10px;
+        margin-bottom: 20px;
+        margin-right: 50px;
+        display: inline-block;
+
+        &>.date {
+            background-color: #393939;
+            width: 100%;
+            margin-top: -10px;
+            margin-left: -10px;
+            padding-right: 10px;
+            padding-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 1.1rem;
+        }
+
+        &>.FIO {
+            background-color: #6D6D6D;
+            margin-left: -10px;
+            margin-right: -10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        &>.schedule {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            list-style-type: none;
+            width: 100%;
+            padding-top: 0;
+            width: 200px;
+
+            &>.freely {
+                background-color: #eee;
+                border-top: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
+                margin-left: -50px;
+                margin-right: -10px;
+                font-size: 1.1rem;
+                color: black;
+            }
+
+            &>.appointment {
+                background-color: green;
+                border-top: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
+                margin-left: -50px;
+                font-size: 1.1rem;
+                color: black;
+                margin-right: -10px;
+            }
+        }
+    }
+}

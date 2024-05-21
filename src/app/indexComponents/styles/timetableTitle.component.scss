@@ -1,0 +1,40 @@
+.timetableTitleUl {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-right: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &>h1 {
+        font-size: 2rem;
+        width: 60%;
+    }
+
+    &>.buttons {
+        margin-top: auto;
+        margin-bottom: auto;
+
+        &>.chartButton {
+            height: 100%;
+            font-size: 1.2rem;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #eee;
+            border: 2px solid #253a3b;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+
+            &>a {
+                text-decoration: none;
+                color: black;
+            }
+        }
+
+        &>.chartButton:hover {
+            background-color: #ddd;
+        }
+    }
+}
