@@ -1,11 +1,22 @@
-<ul class="timeTable">
+<ul class="timeTable" #timeTable>
     <li class="oneWorker">
         <div class="date">21-05-2024</div>
-        <div class="FIO">asdasdasd</div>
+        <div class="FIO"></div>
         <ul class="schedule">
-            <li class="freely">asdasdasd</li>
+            <li class="freely"></li>
             <li class="freely">asdasdasd</li>
             <li class="appointment">asdasdasd</li>
         </ul>
     </li>
+    <ng-template #tpl1>
+        <li class="oneWorker">
+            <div class="date">21-05-2024</div>
+            <div class="FIO"></div>
+            <ul class="schedule">
+                <li class="freely"></li>
+                <li class="freely">asdasdasd</li>
+                <li class="appointment">asdasdasd</li>
+            </ul>
+        </li>
+    </ng-template>
 </ul>

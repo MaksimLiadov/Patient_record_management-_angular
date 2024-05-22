@@ -4,31 +4,38 @@
 <div class="workersListWrapper">
     <ul class="workersListUl">
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 1</p>
         </li>
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 2</p>
         </li>
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 3</p>
         </li>
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 4</p>
         </li>
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 5</p>
         </li>
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 6</p>
         </li>
         <li>
-            <input type="checkbox" class="addList">
+            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
+                class="addList">
             <p>Работник 7</p>
         </li>
     </ul>

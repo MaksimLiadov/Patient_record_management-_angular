@@ -2,11 +2,13 @@
     <div class="container">
         <div class="sidePanel">
             <recordDate class="recordDate"></recordDate>
-            <workersList class="workersList"></workersList>
+            <workersList class="workersList" (onCheckboxChange)="onCheckboxChange($event)"
+                (onCheckedChange)="onCheckedChange($event)">
+            </workersList>
         </div>
         <div class="mainContent">
             <timetableTitle class="timetableTitle"></timetableTitle>
-            <timetable class="timetableContent"></timetable>
+            <timetable class="timetableContent" [(fio)]="fio" [(checked)]="checked"></timetable>
         </div>
     </div>
 </body>

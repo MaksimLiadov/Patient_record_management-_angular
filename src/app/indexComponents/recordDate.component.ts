@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, AfterContentInit } from "@angular/core";
 
 @Component({
     selector: 'recordDate',
@@ -6,11 +6,16 @@ import { Component } from "@angular/core";
     templateUrl: 'recordDate.component.html',
     styleUrl: './styles/recordDate.component.scss'
 })
-export class RecordDateComponent {
-    defaultDate = new Date();
-    dd = String(this.defaultDate.getDate()).padStart(2, '0');
-    mm = String(this.defaultDate.getMonth() + 1).padStart(2, '0');
-    yyyy = this.defaultDate.getFullYear();
+export class RecordDateComponent implements AfterContentInit {
+    today: string;
 
-    today: string = this.yyyy + '-' + this.mm + '-' + this.dd;
+    ngAfterContentInit() {
+        let defaultDate = new Date();
+        let dd = String(defaultDate.getDate()).padStart(2, '0');
+        let mm = String(defaultDate.getMonth() + 1).padStart(2, '0');
+        let yyyy = defaultDate.getFullYear();
+
+        this.today = yyyy + '-' + mm + '-' + dd;
+    }
+
 }

@@ -13,4 +13,13 @@ import { WorkersListComponent } from "./workersList.component";
     styleUrl: './styles/app.component.scss'
 })
 export class AppComponent {
+    fio: String;
+    checked: boolean;
+    onCheckboxChange(fio: String) {
+        this.fio = fio;
+    }
+    onCheckedChange(checked: boolean) {
+        this.checked = checked
+    }
+
 }

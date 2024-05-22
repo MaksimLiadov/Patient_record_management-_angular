@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef } from "@angular/core";
-import { CheckboxControlValueAccessor } from "@angular/forms";
+import { Component, EventEmitter, Output } from "@angular/core";
 
 @Component({
     selector: 'workersList',
@@ -8,5 +7,12 @@ import { CheckboxControlValueAccessor } from "@angular/forms";
     styleUrl: './styles/workersList.component.scss'
 })
 export class WorkersListComponent {
+    @Output() onCheckboxChange = new EventEmitter<String>();
+    @Output() onCheckedChange = new EventEmitter<boolean>();
+
+    checkboxChange(fio: String, checked: boolean) {
+        this.onCheckboxChange.emit(fio);
+        this.onCheckedChange.emit(checked);
+    }
 
 }
