@@ -1,21 +1,34 @@
-import { Component, AfterContentInit } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 @Component({
     selector: 'recordDate',
     standalone: true,
+    imports: [FormsModule],
     templateUrl: 'recordDate.component.html',
     styleUrl: './styles/recordDate.component.scss'
 })
-export class RecordDateComponent implements AfterContentInit {
-    today: string;
+export class RecordDateComponent implements OnInit {
+    currentDate: string;
 
-    ngAfterContentInit() {
+    @Output() onDateChange = new EventEmitter<String>();
+
+    DateChange(date: string) {
+        const changedDate = new Date(Date.parse(date));
+        const formattedDate = changedDate.toLocaleDateString('ru-RU');
+        this.onDateChange.emit(formattedDate);
+    }
+
+    ngOnInit() {
         let defaultDate = new Date();
         let dd = String(defaultDate.getDate()).padStart(2, '0');
         let mm = String(defaultDate.getMonth() + 1).padStart(2, '0');
         let yyyy = defaultDate.getFullYear();
 
-        this.today = yyyy + '-' + mm + '-' + dd;
+        let today = dd + '.' + mm + '.' + yyyy;
+        this.currentDate = yyyy + '-' + mm + '-' + dd;
+
+        this.onDateChange.emit(today);
     }
 
 }

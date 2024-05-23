@@ -15,11 +15,17 @@ import { WorkersListComponent } from "./workersList.component";
 export class AppComponent {
     fio: String;
     checked: boolean;
+    date: String;
+
     onCheckboxChange(fio: String) {
         this.fio = fio;
     }
+
     onCheckedChange(checked: boolean) {
         this.checked = checked
     }
 
+    onDateChange(date: String) {
+        this.date = date;
+    }
 }
