@@ -1,5 +1,5 @@
 import { NgClass, NgFor } from "@angular/common";
-import { Component, Input, ElementRef, ViewChild, ViewContainerRef, EmbeddedViewRef, TemplateRef, ViewEncapsulation } from "@angular/core";
+import { Component, Input, ElementRef, ViewChild, ViewContainerRef, EmbeddedViewRef, TemplateRef, ViewEncapsulation, QueryList, ViewChildren } from "@angular/core";
 
 @Component({
   selector: 'timetable',
@@ -15,14 +15,22 @@ export class TimetableComponent {
   @Input() checked: boolean;
   @ViewChild('timeTable') timeTable: ElementRef;
   @ViewChild('tpl1') tpl: TemplateRef<any>;
+  @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
   private view: EmbeddedViewRef<Object>;
   constructor(private viewContainerRef: ViewContainerRef) { }
 
-
-
   ngOnChanges(changes: any): void {
-    let scheduleArr: string[][] = this.fillscheduleArr(20);
+    let scheduleArr: string[][] = this.fillscheduleArr(20, this.fio, this.date);
+
+    if (changes.date) {
+      this.dateElements.forEach(element => {
+        element.nativeElement.innerText = this.date;
+        let shedule = element.nativeElement.parentNode;
+        let fio: string = element.nativeElement.parentNode.querySelector(".FIO").innerHTML
+        this.updateShedule(shedule, fio, this.date);
+      })
+    }
 
     let workerData = { fio: this.fio, date: this.date, schedule: scheduleArr[0], scheduleClasses: scheduleArr[1] }
     if ((changes.checked) || (changes.fio)) {
@@ -45,7 +53,14 @@ export class TimetableComponent {
     }
   }
 
-  private addNote(target: HTMLElement, employeeFIO: string) {
+  private updateShedule(shedule, fio: String, date: String): void {
+    let scheduleArr: string[][] = this.fillscheduleArr(20, fio, date);
+    let workerData = { fio: fio, date: date, schedule: scheduleArr[0], scheduleClasses: scheduleArr[1] }
+    this.deleteWorker(workerData.fio);
+    this.addWorker(workerData);
+  }
+
+  private addNote(target: HTMLElement, employeeFIO: string): void {
     let userFIO: string;
     if (userFIO = prompt("Введите ваше ФИО", "Иванов Иван Иванович")) {
       let isValidated = this.checkValidation(userFIO);
@@ -65,7 +80,7 @@ export class TimetableComponent {
     }
   }
 
-  private removeNote(target: HTMLElement) {
+  private removeNote(target: HTMLElement): void {
     let del = confirm("Вы хотите удалить запись?");
     if (del) {
       let parent = target.parentNode;
@@ -95,7 +110,6 @@ export class TimetableComponent {
       target.classList.add("freely");
 
       let key = fio + "," + date + "," + hours + ":" + minuts;
-      console.log(key);
 
       localStorage.removeItem(key)
 
@@ -117,7 +131,7 @@ export class TimetableComponent {
     this.timeTable.nativeElement.appendChild(this.view.rootNodes[0]);
   }
 
-  private fillscheduleArr(scheduleLenght: number): string[][] {
+  private fillscheduleArr(scheduleLenght: number, fio: String, date: String): string[][] {
     let arr: string[][] = [[], []];
     let time = new Date();
     time.setHours(8, 0, 0);
@@ -135,7 +149,7 @@ export class TimetableComponent {
         let key = localStorage.key(i);
         let [keyWorkerName, keyRecordDate, keyTime] = key.split(',');
 
-        if ((keyWorkerName == this.fio) && (keyRecordDate == this.date) && (keyTime == sheduleTime)) {
+        if ((keyWorkerName == fio) && (keyRecordDate == date) && (keyTime == sheduleTime)) {
           thereIsRecord = true;
           userFIO = localStorage.getItem(key);
           i = localStorage.length;
@@ -155,7 +169,7 @@ export class TimetableComponent {
     return arr
   }
 
-  private checkValidation(fio) {
+  private checkValidation(fio: string): boolean {
     let isValidated = true;
 
     let [name, lastName, Patronymic] = fio.split(" ");
