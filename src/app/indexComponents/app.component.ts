@@ -1,5 +1,7 @@
 import { Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { NgIf } from "@angular/common";
+import { Router, RouterOutlet } from "@angular/router";
 import { TimetableComponent } from "./timetable.component";
 import { TimetableTitleComponent } from "./timetableTitle.component";
 import { RecordDateComponent } from "./recordDate.component";
@@ -8,7 +10,7 @@ import { WorkersListComponent } from "./workersList.component";
 @Component({
     selector: "my-app",
     standalone: true,
-    imports: [FormsModule, TimetableComponent, RecordDateComponent, WorkersListComponent, TimetableTitleComponent],
+    imports: [NgIf, RouterOutlet, FormsModule, TimetableComponent, RecordDateComponent, WorkersListComponent, TimetableTitleComponent],
     templateUrl: './app.component.html',
     styleUrl: './styles/app.component.scss'
 })
@@ -16,6 +18,7 @@ export class AppComponent {
     fio: String;
     checked: boolean;
     date: String;
+    condition: boolean = true;
 
     onCheckboxChange(fio: String) {
         this.fio = fio;

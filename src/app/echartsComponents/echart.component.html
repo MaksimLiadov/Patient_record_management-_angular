@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="toolbar">
+        <h1 class="title">Графики</h1>
+        <a class="toMainButton" (click)="toMain()">Назад</a>
+    </div>
+
+    <div class="echartWrapper">
+        <div class="echarts" echarts [options]="allTimeChartOptions"></div>
+        <div class="echarts" echarts [options]="oneDayChartOptions"></div>
+        <div class="echarts" echarts [options]="weekChartOptions"></div>
+    </div>
+</div>

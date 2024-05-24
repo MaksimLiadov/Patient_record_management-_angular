@@ -1,0 +1,41 @@
+.container {}
+
+.toolbar {
+    margin-left: 20px;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toMainButton {
+    // height: 20px;
+    // cursor: pointer;
+    // background-color: #eee;
+    // border: 2px solid #253a3b;
+    // border-radius: 4px;
+    // transition: background-color 0.3s ease;
+    // text-decoration: none;
+    // color: black;
+    height: 50%;
+    font-size: 1.2rem;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #eee;
+    border: 2px solid #253a3b;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    font-family: Arial;
+}
+
+.title {
+    font-family: Arial;
+}
+
+.echarts {
+    display: flex;
+    flex-direction: row;
+    width: 800px;
+}
