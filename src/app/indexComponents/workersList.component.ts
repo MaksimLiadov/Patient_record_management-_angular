@@ -7,12 +7,12 @@ import { Component, EventEmitter, Output } from "@angular/core";
     styleUrl: './styles/workersList.component.scss'
 })
 export class WorkersListComponent {
-    @Output() onCheckboxChange = new EventEmitter<String>();
-    @Output() onCheckedChange = new EventEmitter<boolean>();
+    @Output() onEmployeeChange = new EventEmitter<string>();
+    @Output() onEmployeeAddedChange = new EventEmitter<boolean>();
 
-    checkboxChange(fio: String, checked: boolean): void {
-        this.onCheckboxChange.emit(fio);
-        this.onCheckedChange.emit(checked);
+    checkboxChange(fio: string, isEmployeeAdded: boolean): void {
+        this.onEmployeeChange.emit(fio);
+        this.onEmployeeAddedChange.emit(isEmployeeAdded);
     }
 
 }

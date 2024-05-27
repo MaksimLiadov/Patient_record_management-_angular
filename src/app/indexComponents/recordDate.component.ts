@@ -1,34 +1,28 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { DatePipe } from "@angular/common";
 
 @Component({
     selector: 'recordDate',
     standalone: true,
-    imports: [FormsModule],
+    imports: [FormsModule, DatePipe],
     templateUrl: 'recordDate.component.html',
     styleUrl: './styles/recordDate.component.scss'
 })
 export class RecordDateComponent implements OnInit {
-    public currentDate: string;
+    public currentDate: Date;
 
-    @Output() onDateChange = new EventEmitter<String>();
+    @Output() onDateChange = new EventEmitter<Date>();
 
-    public dateChange(date: string): void {
-        const changedDate = new Date(Date.parse(date));
-        const formattedDate = changedDate.toLocaleDateString('ru-RU');
-        this.onDateChange.emit(formattedDate);
+    public dateChange(dateStr: string): void {
+        const date = new Date(dateStr);
+        this.onDateChange.emit(date);
     }
 
     ngOnInit() {
         let defaultDate = new Date();
-        let dd = String(defaultDate.getDate()).padStart(2, '0');
-        let mm = String(defaultDate.getMonth() + 1).padStart(2, '0');
-        let yyyy = defaultDate.getFullYear();
-
-        let today = dd + '.' + mm + '.' + yyyy;
-        this.currentDate = yyyy + '-' + mm + '-' + dd;
-
-        this.onDateChange.emit(today);
+        this.currentDate = defaultDate;
+        this.onDateChange.emit(defaultDate);
     }
 
 }

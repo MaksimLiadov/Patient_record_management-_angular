@@ -14,19 +14,19 @@ import { WorkersListComponent } from "./workersList.component";
 })
 export class AppComponent {
     public fio: string;
-    public checked: boolean;
-    public date: string;
-    public condition: boolean = true;
+    public isEmployeeAdded: boolean;
+    public date: Date;
 
-    public onCheckboxChange(fio: string): void {
+    public onEmployeeChange(fio: string): void {
         this.fio = fio;
     }
 
-    public onCheckedChange(checked: boolean): void {
-        this.checked = checked
+    public onEmployeeAddedChange(isEmployeeAdded: boolean): void {
+        this.isEmployeeAdded = isEmployeeAdded;
+
     }
 
-    public onDateChange(date: string): void {
+    public onDateChange(date: Date): void {
         this.date = date;
     }
 }

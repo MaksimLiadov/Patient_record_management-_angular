@@ -10,8 +10,9 @@ import { Component, Input, ElementRef, ViewChild, ViewContainerRef, EmbeddedView
 })
 export class TimetableComponent {
   @Input() fio: string;
-  @Input() date: string;
-  @Input() checked: boolean;
+  @Input() date: Date;
+  public dateStr: string;
+  @Input() isEmployeeAdded: boolean;
   @ViewChild('timeTable') timeTable: ElementRef;
   @ViewChild('tpl1') tpl: TemplateRef<any>;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
@@ -20,25 +21,43 @@ export class TimetableComponent {
   constructor(private viewContainerRef: ViewContainerRef) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    let scheduleArr: string[][] = this.fillScheduleArr(20, this.fio, this.date);
+    if (changes.date) { this.setDateStr(); }
 
     if (changes.date && this.dateElements != undefined) {
+
+      console.log(this.dateStr);
+
       this.dateElements.forEach(element => {
-        element.nativeElement.innerText = this.date;
+        element.nativeElement.innerText = this.dateStr;
         let fio: string = element.nativeElement.parentNode.querySelector(".FIO").innerHTML
-        this.updateSchedule(fio, this.date);
+        this.updateSchedule(fio, this.dateStr);
       })
     }
 
-    let workerData = { fio: this.fio, date: this.date, schedule: scheduleArr[0], scheduleClasses: scheduleArr[1] }
-    if ((changes.checked) || (changes.fio)) {
-      if (this.checked) {
+    if ((changes.isEmployeeAdded) || (changes.fio)) {
+      let scheduleArr: string[][] = this.fillScheduleArr(20, this.fio, this.dateStr);
+      let workerData = { fio: this.fio, date: this.dateStr, schedule: scheduleArr[0], scheduleClasses: scheduleArr[1] }
+      if (this.isEmployeeAdded) {
         this.addWorker(workerData);
       }
       else {
         this.deleteWorker(workerData.fio);
       }
     }
+  }
+
+  private setDateStr(): void {
+    console.log(this.date);
+
+    if (typeof (this.date) === "object") {
+
+      console.log("Date");
+    }
+    let dd = String(this.date.getDate()).padStart(2, '0');
+    let mm = String(this.date.getMonth() + 1).padStart(2, '0');
+    let yyyy = this.date.getFullYear();
+
+    this.dateStr = dd + '.' + mm + '.' + yyyy;
   }
 
   public clickEvent(target: HTMLElement, fio: string): void {
@@ -65,7 +84,7 @@ export class TimetableComponent {
 
       if (isValidated) {
 
-        let currentDate = this.date;
+        let currentDate = this.dateStr;
         let key = employeeFIO + "," + currentDate + "," + target.innerText;
         localStorage.setItem(key, userFIO)
 

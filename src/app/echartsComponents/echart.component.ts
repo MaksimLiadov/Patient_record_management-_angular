@@ -22,8 +22,8 @@ export class EchartComponent implements OnInit {
 
     ngOnInit(): void {
         this.fillAllTimeChart();
-        this.filloneDayChartOptions();
-        this.fillweekChartOptions();
+        this.fillOneDayChartOptions();
+        this.fillWeekChartOptions();
     }
 
 
@@ -31,7 +31,7 @@ export class EchartComponent implements OnInit {
         this.router.navigate([""]);
     }
 
-    fillweekChartOptions() {
+    fillWeekChartOptions() {
         let DayOfWeek = this.getDayOfWeek();
 
         let numberAppointment = [];
@@ -62,7 +62,7 @@ export class EchartComponent implements OnInit {
         };
     }
 
-    filloneDayChartOptions() {
+    fillOneDayChartOptions() {
         let mapOneDay = this.getOneDayMap();
 
         let workersArr = [];
