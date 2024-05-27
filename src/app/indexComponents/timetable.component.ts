@@ -28,7 +28,7 @@ export class TimetableComponent {
         element.nativeElement.innerText = this.date;
         let shedule = element.nativeElement.parentNode;
         let fio: string = element.nativeElement.parentNode.querySelector(".FIO").innerHTML
-        this.updateShedule(shedule, fio, this.date);
+        this.updateShedule(fio, this.date);
       })
     }
 
@@ -53,7 +53,7 @@ export class TimetableComponent {
     }
   }
 
-  private updateShedule(shedule, fio: String, date: String): void {
+  private updateShedule(fio: String, date: String): void {
     let scheduleArr: string[][] = this.fillscheduleArr(20, fio, date);
     let workerData = { fio: fio, date: date, schedule: scheduleArr[0], scheduleClasses: scheduleArr[1] }
     this.deleteWorker(workerData.fio);

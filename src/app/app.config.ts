@@ -6,6 +6,7 @@ import { AppComponent } from "./indexComponents/app.component";
 
 const appRoutes: Routes = [
     { path: "echarts", component: EchartComponent },
+    { path: "main", component: AppComponent },
     { path: "", component: AppComponent }
 ];
 

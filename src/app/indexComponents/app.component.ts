@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { NgIf } from "@angular/common";
 import { Router, RouterOutlet } from "@angular/router";
@@ -14,11 +14,17 @@ import { WorkersListComponent } from "./workersList.component";
     templateUrl: './app.component.html',
     styleUrl: './styles/app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     fio: String;
     checked: boolean;
     date: String;
     condition: boolean = true;
+
+    constructor(private router: Router) { }
+
+    ngOnInit(): void {
+        this.router.navigate(["/main"]);
+    }
 
     onCheckboxChange(fio: String) {
         this.fio = fio;

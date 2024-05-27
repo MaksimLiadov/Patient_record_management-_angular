@@ -1,11 +1,12 @@
-import { Component, Output, EventEmitter } from "@angular/core";
-import { Router, RouterOutlet } from "@angular/router";
+import { Component } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
+import { AppComponent } from "./indexComponents/app.component"
 
 @Component({
     selector: 'router',
     standalone: true,
-    imports: [RouterOutlet],
-    template: `<router-outlet></router-outlet>`,
+    imports: [RouterOutlet, AppComponent],
+    template: `<router-outlet></router-outlet>`
 })
 export class RouterComponent {
 
