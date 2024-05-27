@@ -23,7 +23,7 @@ export class TimetableComponent {
   ngOnChanges(changes: any): void {
     let scheduleArr: string[][] = this.fillscheduleArr(20, this.fio, this.date);
 
-    if (changes.date) {
+    if (changes.date && this.dateElements != undefined) {
       this.dateElements.forEach(element => {
         element.nativeElement.innerText = this.date;
         let shedule = element.nativeElement.parentNode;
@@ -120,7 +120,7 @@ export class TimetableComponent {
 
   private deleteWorker(fio: String): void {
     let element = document.getElementById(`${fio}`);
-    element.remove();
+    if (element) { element.remove(); }
   }
 
   private addWorker(workerData): void {

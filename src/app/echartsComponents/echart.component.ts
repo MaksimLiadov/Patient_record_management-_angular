@@ -33,8 +33,6 @@ export class EchartComponent implements OnInit {
 
     fillweekChartOptions() {
         let DayOfWeek = this.getDayOfWeek();
-        console.log(DayOfWeek);
-
 
         let numberAppointment = [];
         for (let day in DayOfWeek) {
