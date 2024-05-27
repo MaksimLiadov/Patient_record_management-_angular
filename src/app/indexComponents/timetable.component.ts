@@ -1,17 +1,16 @@
 import { NgClass, NgFor } from "@angular/common";
-import { Component, Input, ElementRef, ViewChild, ViewContainerRef, EmbeddedViewRef, TemplateRef, ViewEncapsulation, QueryList, ViewChildren } from "@angular/core";
+import { Component, Input, ElementRef, ViewChild, ViewContainerRef, EmbeddedViewRef, TemplateRef, QueryList, ViewChildren, SimpleChanges } from "@angular/core";
 
 @Component({
   selector: 'timetable',
   standalone: true,
   imports: [NgFor, NgClass],
-  encapsulation: ViewEncapsulation.None,
   templateUrl: 'timetable.component.html',
   styleUrl: './styles/timetable.component.scss'
 })
 export class TimetableComponent {
-  @Input() fio: String;
-  @Input() date: String;
+  @Input() fio: string;
+  @Input() date: string;
   @Input() checked: boolean;
   @ViewChild('timeTable') timeTable: ElementRef;
   @ViewChild('tpl1') tpl: TemplateRef<any>;
@@ -20,15 +19,14 @@ export class TimetableComponent {
   private view: EmbeddedViewRef<Object>;
   constructor(private viewContainerRef: ViewContainerRef) { }
 
-  ngOnChanges(changes: any): void {
-    let scheduleArr: string[][] = this.fillscheduleArr(20, this.fio, this.date);
+  ngOnChanges(changes: SimpleChanges) {
+    let scheduleArr: string[][] = this.fillScheduleArr(20, this.fio, this.date);
 
     if (changes.date && this.dateElements != undefined) {
       this.dateElements.forEach(element => {
         element.nativeElement.innerText = this.date;
-        let shedule = element.nativeElement.parentNode;
         let fio: string = element.nativeElement.parentNode.querySelector(".FIO").innerHTML
-        this.updateShedule(fio, this.date);
+        this.updateSchedule(fio, this.date);
       })
     }
 
@@ -43,7 +41,7 @@ export class TimetableComponent {
     }
   }
 
-  private clickEvent(target: HTMLElement, fio: string) {
+  public clickEvent(target: HTMLElement, fio: string): void {
     let className: string = "freely";
     if (target.classList.contains(className)) {
       this.addNote(target, fio);
@@ -53,8 +51,8 @@ export class TimetableComponent {
     }
   }
 
-  private updateShedule(fio: String, date: String): void {
-    let scheduleArr: string[][] = this.fillscheduleArr(20, fio, date);
+  private updateSchedule(fio: String, date: String): void {
+    let scheduleArr: string[][] = this.fillScheduleArr(20, fio, date);
     let workerData = { fio: fio, date: date, schedule: scheduleArr[0], scheduleClasses: scheduleArr[1] }
     this.deleteWorker(workerData.fio);
     this.addWorker(workerData);
@@ -67,8 +65,8 @@ export class TimetableComponent {
 
       if (isValidated) {
 
-        let curenttDate = this.date;
-        let key = employeeFIO + "," + curenttDate + "," + target.innerText;
+        let currentDate = this.date;
+        let key = employeeFIO + "," + currentDate + "," + target.innerText;
         localStorage.setItem(key, userFIO)
 
         target.innerText = userFIO;
@@ -84,32 +82,32 @@ export class TimetableComponent {
     let del = confirm("Вы хотите удалить запись?");
     if (del) {
       let parent = target.parentNode;
-      let numberOfelem: number;
+      let numberOfElem: number;
       let date = target.parentNode.parentNode.querySelector(".date").innerHTML;
       let fio = target.parentNode.parentNode.querySelector(".FIO").innerHTML;
 
       for (let i = 0; i < parent.childNodes.length; i++) {
         if (parent.childNodes[i] == target) {
-          numberOfelem = i;
+          numberOfElem = i;
         }
       }
 
       let time = new Date();
       time.setHours(8, 0, 0);
-      for (let i = 0; i < numberOfelem; i++) {
+      for (let i = 0; i < numberOfElem; i++) {
         time.setMinutes(time.getMinutes() + 10);
       }
       let hours = time.getHours().toString();
-      let minuts = time.getMinutes().toString();
-      if (minuts == "0") {
-        minuts = "00";
+      let minutes = time.getMinutes().toString();
+      if (minutes == "0") {
+        minutes = "00";
       }
 
-      target.innerHTML = (hours + ":" + minuts);
+      target.innerHTML = (hours + ":" + minutes);
       target.classList.remove("appointment");
       target.classList.add("freely");
 
-      let key = fio + "," + date + "," + hours + ":" + minuts;
+      let key = fio + "," + date + "," + hours + ":" + minutes;
 
       localStorage.removeItem(key)
 
@@ -131,25 +129,25 @@ export class TimetableComponent {
     this.timeTable.nativeElement.appendChild(this.view.rootNodes[0]);
   }
 
-  private fillscheduleArr(scheduleLenght: number, fio: String, date: String): string[][] {
+  private fillScheduleArr(scheduleLength: number, fio: String, date: String): string[][] {
     let arr: string[][] = [[], []];
     let time = new Date();
     time.setHours(8, 0, 0);
     let userFIO: string;
 
-    for (let i = 0; i < scheduleLenght; i++) {
+    for (let i = 0; i < scheduleLength; i++) {
       let thereIsRecord: boolean = false;
       let hours: string = time.getHours().toString();
-      let minuts: string = time.getMinutes().toString();
-      if (minuts == "0")
-        minuts = "00";
-      let sheduleTime = `${hours}:${minuts}`;
+      let minutes: string = time.getMinutes().toString();
+      if (minutes == "0")
+        minutes = "00";
+      let scheduleTime = `${hours}:${minutes}`;
 
       for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
         let [keyWorkerName, keyRecordDate, keyTime] = key.split(',');
 
-        if ((keyWorkerName == fio) && (keyRecordDate == date) && (keyTime == sheduleTime)) {
+        if ((keyWorkerName == fio) && (keyRecordDate == date) && (keyTime == scheduleTime)) {
           thereIsRecord = true;
           userFIO = localStorage.getItem(key);
           i = localStorage.length;
@@ -160,7 +158,7 @@ export class TimetableComponent {
         arr[1].push("appointment");
       }
       else {
-        arr[0].push(sheduleTime);
+        arr[0].push(scheduleTime);
         arr[1].push("freely");
       }
 

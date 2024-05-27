@@ -1,5 +1,5 @@
 <body>
-    <div class="container" *ngIf="condition">
+    <div class="container">
         <div class="sidePanel">
             <recordDate class="recordDate" (onDateChange)="onDateChange($event)"></recordDate>
             <workersList class="workersList" (onCheckboxChange)="onCheckboxChange($event)"
@@ -8,7 +8,7 @@
         </div>
         <div class="mainContent">
             <timetableTitle class="timetableTitle"></timetableTitle>
-            <timetable class="timetableContent" [(fio)]="fio" [(checked)]="checked" [(date)]="date"></timetable>
+            <timetable class="timetableContent" [fio]="fio" [checked]="checked" [date]="date"></timetable>
         </div>
     </div>
 </body>

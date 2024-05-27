@@ -9,11 +9,11 @@ import { FormsModule } from "@angular/forms";
     styleUrl: './styles/recordDate.component.scss'
 })
 export class RecordDateComponent implements OnInit {
-    currentDate: string;
+    public currentDate: string;
 
     @Output() onDateChange = new EventEmitter<String>();
 
-    DateChange(date: string) {
+    public dateChange(date: string): void {
         const changedDate = new Date(Date.parse(date));
         const formattedDate = changedDate.toLocaleDateString('ru-RU');
         this.onDateChange.emit(formattedDate);

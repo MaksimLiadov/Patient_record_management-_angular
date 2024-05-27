@@ -10,7 +10,7 @@ export class WorkersListComponent {
     @Output() onCheckboxChange = new EventEmitter<String>();
     @Output() onCheckedChange = new EventEmitter<boolean>();
 
-    checkboxChange(fio: String, checked: boolean) {
+    checkboxChange(fio: String, checked: boolean): void {
         this.onCheckboxChange.emit(fio);
         this.onCheckedChange.emit(checked);
     }

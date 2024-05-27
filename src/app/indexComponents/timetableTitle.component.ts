@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from "@angular/core";
+import { Component } from "@angular/core";
 import { Router, RouterOutlet } from "@angular/router";
 
 @Component({
@@ -11,7 +11,7 @@ import { Router, RouterOutlet } from "@angular/router";
 export class TimetableTitleComponent {
 
     constructor(private router: Router) { }
-    toEcharts() {
+    toEcharts(): void {
         this.router.navigate(["/echarts"]);
     }
 }
