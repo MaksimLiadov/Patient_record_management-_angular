@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
 import { Router, RouterOutlet } from "@angular/router";
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
     selector: 'timetableTitle',
     standalone: true,
-    imports: [RouterOutlet],
+    imports: [RouterOutlet, ButtonModule],
     templateUrl: 'timetableTitle.component.html',
     styleUrl: './styles/timetableTitle.component.scss'
 })

@@ -1,14 +1,12 @@
 <ul class="timeTable" #timeTable>
-    <ng-template #tpl1 let-worker>
-        <li class="oneWorker">
-            <div class="date" #date>{{worker.date}}</div>
-            <div class="FIO" #fio>{{worker.fio}}</div>
-            <ul class="schedule">
-                <li (click)="clickEvent($event.target, fio.textContent)"
-                    *ngFor="let item of worker.schedule; let i = index" [ngClass]="worker.scheduleClasses[i]">
-                    {{ item }}
-                </li>
-            </ul>
-        </li>
-    </ng-template>
+    <li class="oneWorker" *ngFor="let worker of employeeTimeTableArr">
+        <div class="date" #date>{{ worker.date | date:'dd.MM.yyyy' }}</div>
+        <div class="FIO" #fio>{{ worker.fio }}</div>
+        <ul class="schedule">
+            <li (click)="clickEvent($event.target, fio.textContent)" *ngFor="let schedule of worker.schedules"
+                [ngClass]="schedule.isFree ? 'freely' : 'appointment'">
+                {{ schedule.time }}
+            </li>
+        </ul>
+    </li>
 </ul>

@@ -1,42 +1,12 @@
 <div class="workersListTitle">
-    <h1>Специалиты</h1>
+    <h1>Специалиcты</h1>
 </div>
 <div class="workersListWrapper">
     <ul class="workersListUl">
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 1</p>
-        </li>
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 2</p>
-        </li>
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 3</p>
-        </li>
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 4</p>
-        </li>
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 5</p>
-        </li>
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 6</p>
-        </li>
-        <li>
-            <input type="checkbox" (change)="checkboxChange($event.target.nextSibling.innerText, $event.target.checked)"
-                class="addList">
-            <p>Работник 7</p>
+        <li *ngFor="let worker of workersObjArr" [ngClass]="addList">
+            <p-checkbox [(ngModel)]="worker.checked" [binary]="true"
+                (click)="checkboxChange(worker.name, worker.checked)" />
+            <p>{{worker.name}}</p>
         </li>
     </ul>
 </div>

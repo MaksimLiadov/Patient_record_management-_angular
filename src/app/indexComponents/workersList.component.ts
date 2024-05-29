@@ -1,14 +1,29 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Output, OnInit } from "@angular/core";
+import { NgClass, NgFor } from "@angular/common";
+import { CheckboxModule } from 'primeng/checkbox';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'workersList',
+    imports: [NgClass, NgFor, CheckboxModule, FormsModule],
     standalone: true,
     templateUrl: 'workersList.component.html',
     styleUrl: './styles/workersList.component.scss'
 })
-export class WorkersListComponent {
+export class WorkersListComponent implements OnInit {
     @Output() onEmployeeChange = new EventEmitter<string>();
     @Output() onEmployeeAddedChange = new EventEmitter<boolean>();
+    checked: boolean = false;
+
+    public workersArr: string[] = ["Работник 1", "Работник 2", "Работник 3", "Работник 4", "Работник 5", "Работник 6", "Работник 7"]
+    public workersObjArr: object[] = [];
+
+    ngOnInit(): void {
+        for (let worker of this.workersArr) {
+            this.workersObjArr.push({ name: worker, checked: false });
+        }
+
+    }
 
     checkboxChange(fio: string, isEmployeeAdded: boolean): void {
         this.onEmployeeChange.emit(fio);

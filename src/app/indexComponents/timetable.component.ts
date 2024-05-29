@@ -1,31 +1,83 @@
-import { NgClass, NgFor } from "@angular/common";
+import { NgClass, NgFor, DatePipe } from "@angular/common";
 import { Component, Input, ElementRef, ViewChild, ViewContainerRef, EmbeddedViewRef, TemplateRef, QueryList, ViewChildren, SimpleChanges } from "@angular/core";
+import { LocalStorageService } from "src/app/local-storage.service"
+import { IWorker } from "src/app/employee-time-table-struct"
 
 @Component({
   selector: 'timetable',
   standalone: true,
-  imports: [NgFor, NgClass],
+  imports: [NgFor, NgClass, DatePipe],
+  providers: [LocalStorageService],
   templateUrl: 'timetable.component.html',
   styleUrl: './styles/timetable.component.scss'
 })
 export class TimetableComponent {
   @Input() fio: string;
   @Input() date: Date;
-  public dateStr: string;
   @Input() isEmployeeAdded: boolean;
   @ViewChild('timeTable') timeTable: ElementRef;
   @ViewChild('tpl1') tpl: TemplateRef<any>;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
   private view: EmbeddedViewRef<Object>;
-  constructor(private viewContainerRef: ViewContainerRef) { }
+  constructor(private viewContainerRef: ViewContainerRef, private localStorageService: LocalStorageService) { }
 
+  public employeeTimeTableArr: IWorker[] = [];
+
+  ngOnChanges(changes: SimpleChanges) {
+
+    if (changes.date && this.dateElements != undefined) {
+      this.localStorageService.dateChange(this.date);
+    }
+
+    if ((changes.isEmployeeAdded) || (changes.fio)) {
+      if (this.isEmployeeAdded) {
+        let schedule = this.localStorageService.getISchedule(this.fio, this.date);
+        this.localStorageService.addEmployeeTimeTable(this.fio, this.date, schedule);
+        this.employeeTimeTableArr = this.localStorageService.getEmployeeTimeTableArr();
+      }
+      else {
+        this.localStorageService.removeEmployeeTimeTable(this.fio);
+        this.employeeTimeTableArr = this.localStorageService.getEmployeeTimeTableArr();
+      }
+    }
+  }
+
+  public clickEvent(target: HTMLElement, fio: string): void {
+    let className: string = "freely";
+    if (target.classList.contains(className)) {
+      //this.addNote(target, fio);
+    }
+    else {
+      //this.removeNote(target);
+    }
+  }
+
+  // private addNote(target: HTMLElement, employeeFIO: string): void {
+  //   let userFIO: string;
+  //   if (userFIO = prompt("Введите ваше ФИО", "Иванов Иван Иванович")) {
+  //     let isValidated = this.checkValidation(userFIO);
+
+  //     if (isValidated) {
+
+  //       let currentDate = this.dateStr;
+  //       let key = employeeFIO + "," + currentDate + "," + target.innerText;
+  //       localStorage.setItem(key, userFIO)
+
+  //       target.innerText = userFIO;
+  //       target.classList.add('appointment');
+  //       target.classList.remove('freely');
+  //     }
+  //     else
+  //       alert("Введено некоректное ФИО");
+  //   }
+  // }
+
+  /*
   ngOnChanges(changes: SimpleChanges) {
     if (changes.date) { this.setDateStr(); }
 
     if (changes.date && this.dateElements != undefined) {
-
-      console.log(this.dateStr);
 
       this.dateElements.forEach(element => {
         element.nativeElement.innerText = this.dateStr;
@@ -47,12 +99,7 @@ export class TimetableComponent {
   }
 
   private setDateStr(): void {
-    console.log(this.date);
 
-    if (typeof (this.date) === "object") {
-
-      console.log("Date");
-    }
     let dd = String(this.date.getDate()).padStart(2, '0');
     let mm = String(this.date.getMonth() + 1).padStart(2, '0');
     let yyyy = this.date.getFullYear();
@@ -60,15 +107,7 @@ export class TimetableComponent {
     this.dateStr = dd + '.' + mm + '.' + yyyy;
   }
 
-  public clickEvent(target: HTMLElement, fio: string): void {
-    let className: string = "freely";
-    if (target.classList.contains(className)) {
-      this.addNote(target, fio);
-    }
-    else {
-      this.removeNote(target);
-    }
-  }
+  
 
   private updateSchedule(fio: String, date: String): void {
     let scheduleArr: string[][] = this.fillScheduleArr(20, fio, date);
@@ -77,25 +116,7 @@ export class TimetableComponent {
     this.addWorker(workerData);
   }
 
-  private addNote(target: HTMLElement, employeeFIO: string): void {
-    let userFIO: string;
-    if (userFIO = prompt("Введите ваше ФИО", "Иванов Иван Иванович")) {
-      let isValidated = this.checkValidation(userFIO);
-
-      if (isValidated) {
-
-        let currentDate = this.dateStr;
-        let key = employeeFIO + "," + currentDate + "," + target.innerText;
-        localStorage.setItem(key, userFIO)
-
-        target.innerText = userFIO;
-        target.classList.add('appointment');
-        target.classList.remove('freely');
-      }
-      else
-        alert("Введено некоректное ФИО");
-    }
-  }
+ 
 
   private removeNote(target: HTMLElement): void {
     let del = confirm("Вы хотите удалить запись?");
@@ -203,5 +224,5 @@ export class TimetableComponent {
     }
 
     return isValidated;
-  }
+  }*/
 }

@@ -1,22 +1,23 @@
-import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, DoCheck } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DatePipe } from "@angular/common";
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
     selector: 'recordDate',
     standalone: true,
-    imports: [FormsModule, DatePipe],
+    imports: [FormsModule, DatePipe, CalendarModule],
     templateUrl: 'recordDate.component.html',
     styleUrl: './styles/recordDate.component.scss'
 })
-export class RecordDateComponent implements OnInit {
+export class RecordDateComponent implements OnInit, DoCheck {
     public currentDate: Date;
 
     @Output() onDateChange = new EventEmitter<Date>();
 
-    public dateChange(dateStr: string): void {
-        const date = new Date(dateStr);
-        this.onDateChange.emit(date);
+    //Вызывается несколько раз, onChange не работает
+    ngDoCheck(): void {
+        this.onDateChange.emit(this.currentDate);
     }
 
     ngOnInit() {

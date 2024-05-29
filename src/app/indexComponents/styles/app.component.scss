@@ -10,17 +10,17 @@ body {
         top: 0;
         left: 0;
         height: 100%;
-        width: calc(100% - 4px);
+        width: 100%;
         font-size: 16px;
 
         &>.sidePanel {
-            position: fixed;
+            position: relative;
             width: 20%;
             height: 100%;
             float: left;
 
             &>.recordDate {
-                width: calc(100% - 4px);
+                width: 100%;
                 height: 18%;
                 text-align: center;
                 display: flex;
@@ -33,23 +33,21 @@ body {
                 flex-direction: column;
                 background-color: #e7e6e6;
                 border: 2px solid #253a3b;
-                height: calc(100% - 8px);
+                height: 100%;
             }
 
         }
 
         &>.mainContent {
             position: relative;
-            left: 20%;
             height: 100%;
             float: left;
             width: 80%;
 
             &>.timetableTitle {
                 position: fixed;
-                z-index: 1;
                 display: flex;
-                width: calc(80% - 3px);
+                width: 80%;
                 height: 10%;
                 font-family: "Arial", sans-serif;
                 background-color: #e7e6e6;
@@ -58,10 +56,10 @@ body {
 
             &>.timetableContent {
                 position: relative;
-                top: calc(10% + 4px);
+                top: 10%;
                 display: flex;
                 flex-direction: row;
-                min-height: calc(90% - 8px);
+                min-height: 90%;
                 width: 100%;
                 background-color: #e7e6e6;
                 border: 2px solid #253a3b;

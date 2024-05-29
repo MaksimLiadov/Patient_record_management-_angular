@@ -16,7 +16,17 @@
                             "zone.js"
                         ],
                         "tsConfig": "tsconfig.json",
-                        "aot": true
+                        "aot": true,
+                        "inlineStyleLanguage": "scss",
+                        "styles": [
+                            "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+                            "node_modules/primeng/resources/primeng.min.css"
+                        ],
+                        "stylePreprocessorOptions": {
+                            "includePaths": [
+                                "node_modules/"
+                            ]
+                        }
                     },
                     "configurations": {
                         "production": {

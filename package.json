@@ -9,6 +9,7 @@
         "build": "ng build"
     },
     "dependencies": {
+        "@angular/animations": "^17.0.9",
         "@angular/common": "~17.0.0",
         "@angular/compiler": "~17.0.0",
         "@angular/core": "~17.0.0",
@@ -18,6 +19,7 @@
         "@angular/router": "~17.0.0",
         "echarts": "^5.5.0",
         "ngx-echarts": "^17.2.0",
+        "primeng": "^17.17.0",
         "rxjs": "~7.8.0",
         "zone.js": "~0.14.2"
     },
