@@ -172,7 +172,7 @@ export class LocalStorageService {
         localStorage.setItem('Все записи', JSON.stringify(localStorageData));
     }
 
-    public deletRecordFromLocalStorage(employeeFio: string, date: Date, userFio: string): void {
+    public deleteRecordFromLocalStorage(employeeFio: string, date: Date, userFio: string): void {
         let localStorageData = this.getLocalStorageData();
         let dateStr = this.toDateStr(date);
 

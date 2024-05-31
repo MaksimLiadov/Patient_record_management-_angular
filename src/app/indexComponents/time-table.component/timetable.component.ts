@@ -135,7 +135,7 @@ export class TimetableComponent {
 
   public deleteAppointment(): void {
     this.visibleRedactAppointment = false;
-    this.localStorageService.deletRecordFromLocalStorage(this.employeeFio, this.date, this.userFioForRedact);
+    this.localStorageService.deleteRecordFromLocalStorage(this.employeeFio, this.date, this.userFioForRedact);
     let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === this.employeeFio);
 
     for (let worker of this.employeeTimeTableArr) {

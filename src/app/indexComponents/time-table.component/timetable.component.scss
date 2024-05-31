@@ -121,3 +121,7 @@ p-button.delete {
 p-dialog * {
     margin-top: 8px;
 }
+
+p-dialog {
+    z-index: 2;
+}
