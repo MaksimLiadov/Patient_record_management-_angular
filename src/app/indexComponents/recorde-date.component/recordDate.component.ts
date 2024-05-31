@@ -7,8 +7,8 @@ import { CalendarModule } from 'primeng/calendar';
     selector: 'recordDate',
     standalone: true,
     imports: [FormsModule, DatePipe, CalendarModule],
-    templateUrl: 'recordDate.component.html',
-    styleUrl: './styles/recordDate.component.scss'
+    templateUrl: './recordDate.component.html',
+    styleUrl: './recordDate.component.scss'
 })
 export class RecordDateComponent implements OnInit, DoCheck {
     public currentDate: Date;

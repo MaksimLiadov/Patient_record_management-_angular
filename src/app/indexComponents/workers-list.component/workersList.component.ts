@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
     selector: 'workersList',
     imports: [NgClass, NgFor, CheckboxModule, FormsModule],
     standalone: true,
-    templateUrl: 'workersList.component.html',
-    styleUrl: './styles/workersList.component.scss'
+    templateUrl: './workersList.component.html',
+    styleUrl: './workersList.component.scss'
 })
 export class WorkersListComponent implements OnInit {
     @Output() onEmployeeChange = new EventEmitter<string>();

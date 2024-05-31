@@ -7,8 +7,8 @@ import { ButtonModule } from 'primeng/button';
     selector: 'timetableTitle',
     standalone: true,
     imports: [RouterOutlet, ButtonModule],
-    templateUrl: 'timetableTitle.component.html',
-    styleUrl: './styles/timetableTitle.component.scss'
+    templateUrl: './timetableTitle.component.html',
+    styleUrl: './timetableTitle.component.scss'
 })
 export class TimetableTitleComponent {
 

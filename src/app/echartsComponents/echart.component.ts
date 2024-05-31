@@ -9,8 +9,8 @@ import { LocalStorageService } from "src/app/local-storage.service"
     selector: 'echart',
     standalone: true,
     imports: [NgxEchartsDirective, RouterOutlet],
-    templateUrl: 'echart.component.html',
-    styleUrl: './echartsStyles/echart.component.scss',
+    templateUrl: './echart.component.html',
+    styleUrl: './echart.component.scss',
     providers: [
         provideEcharts(),
         LocalStorageService,

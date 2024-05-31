@@ -8,14 +8,17 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { RippleModule } from 'primeng/ripple';
 
 @Component({
   selector: 'timetable',
   standalone: true,
-  imports: [NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, FormsModule, ButtonModule, InputNumberModule],
-  providers: [LocalStorageService],
+  imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, FormsModule, ButtonModule, InputNumberModule],
+  providers: [LocalStorageService, MessageService],
   templateUrl: 'timetable.component.html',
-  styleUrl: './styles/timetable.component.scss'
+  styleUrl: './timetable.component.scss'
 })
 export class TimetableComponent {
   @Input() fio: string;
@@ -23,7 +26,7 @@ export class TimetableComponent {
   @Input() isEmployeeAdded: boolean;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
-  constructor(private localStorageService: LocalStorageService) { }
+  constructor(private localStorageService: LocalStorageService, private messageService: MessageService) { }
 
   public employeeFio: string = "";
   public recordingTime: string = "";
@@ -37,8 +40,8 @@ export class TimetableComponent {
   public genderForRedact: string;
 
   public userFio: string = '';
-  public age: number;
-  public gender: string;
+  public age: number = null;
+  public gender: string = '';
 
   public employeeTimeTableArr: IWorker[] = [];
   public genders: string[] = ["Женский", "Мужской"]
@@ -90,21 +93,26 @@ export class TimetableComponent {
   }
 
   public saveAppointment(): void {
-    this.visibleMakeAppointment = false;
+    if (this.userFio != "" && this.age != null && this.gender != '') {
+      this.visibleMakeAppointment = false;
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы записались.' });
 
-    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === this.employeeFio);
+      let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === this.employeeFio);
 
-    for (let worker of this.employeeTimeTableArr) {
-      if (worker == iWorker) {
-        for (let schedule of worker.schedules) {
-          if (schedule.time == this.recordingTime) {
-            schedule.name = this.userFio;
-            schedule.isFree = false;
-            this.localStorageService.addRecordToLocaleStorage(this.employeeFio, this.userFio, this.date, this.recordingTime, this.age, this.gender);
+      for (let worker of this.employeeTimeTableArr) {
+        if (worker == iWorker) {
+          for (let schedule of worker.schedules) {
+            if (schedule.time == this.recordingTime) {
+              schedule.name = this.userFio;
+              schedule.isFree = false;
+              this.localStorageService.addRecordToLocaleStorage(this.employeeFio, this.userFio, this.date, this.recordingTime, this.age, this.gender);
+            }
           }
         }
       }
     }
+    else this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Вы не заполнили все поля.' });
+
   }
 
   public saveChanges(): void {
