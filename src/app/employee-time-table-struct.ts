@@ -5,6 +5,9 @@ export interface IWorker {
 }
 
 export interface ISchedule {
+    age: number;
+    gender: string;
     time: string;
     isFree: boolean;
+    name: string;
 }

@@ -11,7 +11,6 @@ export class LocalStorageService {
     public addEmployeeTimeTable(fio: string, date: Date, schedules: ISchedule[]): void {
         let employeeTimeTable: IWorker = { fio: fio, date: date, schedules: schedules };
         this.employeeTimeTableArr.push(employeeTimeTable);
-
     }
 
     public removeEmployeeTimeTable(fio: string): void {
@@ -22,16 +21,52 @@ export class LocalStorageService {
             }
         }
     }
+    public addRecordToLocaleStorage(employeeFio: string, userFio: string, date: Date, time: string, age: number, gender: string): void {
+        let dateStr = this.toDateStr(date);
+        let localStorageObj = this.getLocalStorageData();
+        console.log(time);
 
-    public dateChange(date: Date): void {
-        this.employeeTimeTableArr.forEach(timeTable => {
-            timeTable.date = date;
 
-        });
+        if (!localStorageObj) {
+            localStorageObj = {};
+            localStorageObj[employeeFio] = {};
+            localStorageObj[employeeFio][dateStr] = {}
+            localStorageObj[employeeFio][dateStr][userFio] = {
+                time: time,
+                age: age,
+                gender: gender
+            };
+        }
+        else if (!localStorageObj[employeeFio]) {
+            localStorageObj[employeeFio] = {};
+            localStorageObj[employeeFio][dateStr] = {}
+            localStorageObj[employeeFio][dateStr][userFio] = {
+                time: time,
+                age: age,
+                gender: gender
+            };
+        }
+        else if (!localStorageObj[employeeFio][dateStr]) {
+            localStorageObj[employeeFio][dateStr] = {}
+            localStorageObj[employeeFio][dateStr][userFio] = {
+                time: time,
+                age: age,
+                gender: gender
+            };
+        }
+        else if (!localStorageObj[employeeFio][userFio]) {
+            localStorageObj[employeeFio][dateStr][userFio] = {
+                time: time,
+                age: age,
+                gender: gender
+            };
+        }
+
+        localStorage.setItem('Все записи', JSON.stringify(localStorageObj));
     }
 
     public getLocalStorageData(): object {
-        let LocalStorageObj = JSON.parse(localStorage.getItem("Все работники"));
+        let LocalStorageObj = JSON.parse(localStorage.getItem("Все записи"));
         return LocalStorageObj
     }
 
@@ -52,12 +87,12 @@ export class LocalStorageService {
 
         for (let worker in localStorageData) {
             if (worker == fio) {
-                for (let obj of localStorageData[worker]) {
-                    if (obj.date == dateStr) {
+                for (let recordingDate in localStorageData[worker]) {
+                    if (recordingDate == dateStr) {
                         isFullFree = false;
                         let time = new Date();
                         time.setHours(8, 0, 0);
-                        let schedule: ISchedule = { time: "", isFree: true }
+
                         for (let i = 0; i < 20; i++) {
                             let hours: string = time.getHours().toString();
                             let minutes: string = time.getMinutes().toString();
@@ -68,14 +103,19 @@ export class LocalStorageService {
                             let scheduleTime = `${hours}:${minutes}`;
 
                             let isFree: boolean = true;
+                            let name: string = ""
+                            let age: number = null;
+                            let gender: string = "";
 
-                            for (let timeRecord of obj.time) {
-                                if (scheduleTime == timeRecord) {
-                                    isFree = false
+                            for (let user in localStorageData[worker][recordingDate]) {
+                                if (localStorageData[worker][recordingDate][user].time == scheduleTime) {
+                                    isFree = false;
+                                    name = user;
+                                    age = localStorageData[worker][recordingDate][user].age;
+                                    gender = localStorageData[worker][recordingDate][user].gender;
                                 }
                             }
-                            schedule = { time: scheduleTime, isFree: isFree }
-
+                            let schedule: ISchedule = { time: scheduleTime, isFree: isFree, name: name, age: age, gender: gender }
                             scheduleArr.push(schedule);
 
                             time.setMinutes(time.getMinutes() + 10)
@@ -83,8 +123,11 @@ export class LocalStorageService {
                         }
                     }
                 }
+
             }
         }
+
+
         if (isFullFree) {
             scheduleArr = this.fillFreeScheduleArr();
         }
@@ -106,7 +149,7 @@ export class LocalStorageService {
                 minutes = "00";
 
             let scheduleTime = `${hours}:${minutes}`;
-            let schedule: ISchedule = { time: scheduleTime, isFree: true };
+            let schedule: ISchedule = { time: scheduleTime, isFree: true, name: "", age: null, gender: "" };
             scheduleArr.push(schedule);
 
             time.setMinutes(time.getMinutes() + 10)
@@ -115,5 +158,26 @@ export class LocalStorageService {
         return scheduleArr
     }
 
-    public addNote
+    public saveChangesInLocalStorage(employeeFio: string, date: Date, userFio: string, userOldFioForRedact: string, gender: string, age: number, time: string): void {
+        let localStorageData = this.getLocalStorageData();
+        let dateStr = this.toDateStr(date);
+
+        delete localStorageData[employeeFio][dateStr][userOldFioForRedact];
+        localStorageData[employeeFio][dateStr][userFio] = {
+            age: age,
+            gender: gender,
+            time: time
+        };
+
+        localStorage.setItem('Все записи', JSON.stringify(localStorageData));
+    }
+
+    public deletRecordFromLocalStorage(employeeFio: string, date: Date, userFio: string): void {
+        let localStorageData = this.getLocalStorageData();
+        let dateStr = this.toDateStr(date);
+
+        delete localStorageData[employeeFio][dateStr][userFio];
+
+        localStorage.setItem('Все записи', JSON.stringify(localStorageData));
+    }
 }

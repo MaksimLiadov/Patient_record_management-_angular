@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 export class WorkersListComponent implements OnInit {
     @Output() onEmployeeChange = new EventEmitter<string>();
     @Output() onEmployeeAddedChange = new EventEmitter<boolean>();
-    checked: boolean = false;
 
     public workersArr: string[] = ["Работник 1", "Работник 2", "Работник 3", "Работник 4", "Работник 5", "Работник 6", "Работник 7"]
     public workersObjArr: object[] = [];
