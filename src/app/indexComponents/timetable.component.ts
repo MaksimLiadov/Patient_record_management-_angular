@@ -1,6 +1,7 @@
 import { NgClass, NgFor, DatePipe } from "@angular/common";
 import { Component, Input, SimpleChanges, ViewChildren, QueryList, ElementRef } from "@angular/core";
-import { FormsModule } from "@angular/forms"; import { LocalStorageService } from "src/app/local-storage.service"
+import { FormsModule } from "@angular/forms";
+import { LocalStorageService } from "src/app/local-storage.service"
 import { IWorker } from "src/app/employee-time-table-struct"
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';

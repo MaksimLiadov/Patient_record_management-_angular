@@ -15,8 +15,6 @@
         display: inline-block;
         width: 250px;
 
-
-
         &>.date {
             color: #fcfcfc;
             background-color: #393939;
@@ -43,7 +41,7 @@
             padding-left: 0px;
             padding-bottom: 5px;
 
-            &>p-button {
+            &>p-button.freely {
                 background-color: white;
                 border-radius: 0;
                 border-top: 1px solid #ddd;
@@ -79,4 +77,47 @@
             margin-right: -10px;
         }
     }
+}
+
+p-button.save {
+    margin-left: 10px;
+    height: 100%;
+    font-size: 1.2rem;
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #eee;
+    border: 1px solid #535e5f;
+    border-radius: 4px;
+    color: rgb(78, 78, 78);
+}
+
+p-button.cancel {
+    margin-left: 10px;
+    height: 100%;
+    font-size: 1.2rem;
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #a1a1a1;
+    border: 1px solid #33393a;
+    border-radius: 4px;
+    color: rgb(78, 78, 78);
+}
+
+p-button.delete {
+    margin-left: 10px;
+    height: 100%;
+    font-size: 1.2rem;
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f36666;
+    border: 1px solid #535e5f;
+    border-radius: 4px;
+    color: rgb(78, 78, 78);
+}
+
+p-dialog * {
+    margin-top: 8px;
 }
