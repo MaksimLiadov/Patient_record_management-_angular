@@ -24,8 +24,6 @@ export class LocalStorageService {
     public addRecordToLocaleStorage(employeeFio: string, userFio: string, date: Date, time: string, age: number, gender: string): void {
         let dateStr = this.toDateStr(date);
         let localStorageObj = this.getLocalStorageData();
-        console.log(time);
-
 
         if (!localStorageObj) {
             localStorageObj = {};

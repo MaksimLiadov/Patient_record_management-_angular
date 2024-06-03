@@ -7,30 +7,32 @@
                 label="{{schedule.name}} {{schedule.time}} " (click)="showDialog(fio.innerText, schedule.time)" />
         </ul>
     </li>
+
+
+    <p-dialog class="dialog" #dialog header="Запись на прием" [modal]="true" [(visible)]="visibleMakeAppointment"
+        [style]="{ width: '25rem', height:'22rem' }">
+        <span class="p-text-secondary block mb-5">Запись к {{employeeFio}} на {{recordingTime}}</span>
+        <div class="flex align-items-center gap-3 mb-3">
+            <label for="username" class="font-semibold w-6rem">ФИО</label>
+            <input type="text" pInputText [(ngModel)]="userFio" placeholder="Ваше ФИО" />
+        </div>
+        <div class="flex align-items-center gap-10 mb-5">
+            <label for="usergender" class="font-semibold w-6rem">Пол</label>
+            <p-dropdown id="usergender" [options]="genders" [(ngModel)]="gender" placeholder="Ваш пол" />
+        </div>
+        <div class="flex align-items-center gap-3 mb-5">
+            <label for="userage" class="font-semibold w-6rem">Возраст</label>
+            <p-inputNumber id="userage" [(ngModel)]="age" mode="decimal" [showButtons]="true" inputId="minmax-buttons"
+                [min]="0" [max]="100" placeholder="Ваш возраст" />
+        </div>
+        <div class="flex justify-content-end gap-2">
+            <p-button class="cancel" label="Cancel" severity="secondary" (click)="visibleMakeAppointment = false" />
+            <p-button pRipple class="save" label="Save" (click)="saveAppointment()" />
+        </div>
+    </p-dialog>
 </ul>
 
 
-<p-dialog #dialog header="Запись на прием" [modal]="true" [(visible)]="visibleMakeAppointment"
-    [style]="{ width: '25rem', height:'22rem' }">
-    <span class="p-text-secondary block mb-5">Запись к {{employeeFio}} на {{recordingTime}}</span>
-    <div class="flex align-items-center gap-3 mb-3">
-        <label for="username" class="font-semibold w-6rem">ФИО</label>
-        <input type="text" pInputText [(ngModel)]="userFio" placeholder="Ваше ФИО" />
-    </div>
-    <div class="flex align-items-center gap-10 mb-5">
-        <label for="usergender" class="font-semibold w-6rem">Пол</label>
-        <p-dropdown id="usergender" [options]="genders" [(ngModel)]="gender" placeholder="Ваш пол" />
-    </div>
-    <div class="flex align-items-center gap-3 mb-5">
-        <label for="userage" class="font-semibold w-6rem">Возраст</label>
-        <p-inputNumber id="userage" [(ngModel)]="age" mode="decimal" [showButtons]="true" inputId="minmax-buttons"
-            [min]="0" [max]="100" placeholder="Ваш возраст" />
-    </div>
-    <div class="flex justify-content-end gap-2">
-        <p-button class="cancel" label="Cancel" severity="secondary" (click)="visibleMakeAppointment = false" />
-        <p-button pRipple class="save" label="Save" (click)="saveAppointment()" />
-    </div>
-</p-dialog>
 
 <p-dialog #dialog header="Редактировать запись на прием" [modal]="true" [(visible)]="visibleRedactAppointment"
     [style]="{ width: '25rem', height:'22rem' }">

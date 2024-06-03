@@ -3,6 +3,7 @@
 }
 
 .timeTable {
+
     &>.oneWorker {
         color: #ddd;
         background-color: #A9A9A9;
@@ -53,29 +54,6 @@
                 width: 100%;
             }
         }
-
-
-        &>.freely {
-            cursor: pointer;
-            background-color: white;
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-            margin-left: -50px;
-            margin-right: -10px;
-            font-size: 1.1rem;
-            color: black;
-        }
-
-        &>.appointment {
-            cursor: pointer;
-            background-color: green;
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #dddddd;
-            margin-left: -50px;
-            font-size: 1.1rem;
-            color: black;
-            margin-right: -10px;
-        }
     }
 }
 
@@ -120,8 +98,11 @@ p-button.delete {
 
 p-dialog * {
     margin-top: 8px;
+
 }
 
-p-dialog {
+p-dialog.dialog {
+
+    position: relative;
     z-index: 2;
 }
