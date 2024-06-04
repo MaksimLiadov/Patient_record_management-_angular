@@ -11,12 +11,14 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
+import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DynamicDialogContent } from "../dialog.component/dialog.component"
 
 @Component({
   selector: 'timetable',
   standalone: true,
-  imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, FormsModule, ButtonModule, InputNumberModule],
-  providers: [LocalStorageService, MessageService],
+  imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, DynamicDialogModule, FormsModule, ButtonModule, InputNumberModule],
+  providers: [LocalStorageService, MessageService, DialogService],
   templateUrl: 'timetable.component.html',
   styleUrl: './timetable.component.scss'
 })
@@ -26,7 +28,9 @@ export class TimetableComponent {
   @Input() isEmployeeAdded: boolean;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
-  constructor(private localStorageService: LocalStorageService, private messageService: MessageService) { }
+  constructor(private localStorageService: LocalStorageService, private messageService: MessageService, public dialogService: DialogService) { }
+
+  ref: DynamicDialogRef | undefined;
 
   public employeeFio: string = "";
   public recordingTime: string = "";
@@ -64,6 +68,41 @@ export class TimetableComponent {
         this.employeeTimeTableArr = this.localStorageService.getEmployeeTimeTableArr();
       }
     }
+  }
+
+  ngOnDestroy() {
+
+    if (this.ref) {
+      this.ref.close();
+    }
+  }
+
+  public showDinamicDialog(employeeFio: string, recordingTime: string): void {
+    this.ref = this.dialogService.open(DynamicDialogContent, {
+      data: {
+        employeeFio: employeeFio,
+        recordingTime: recordingTime
+      },
+      header: 'Запись на прием',
+      width: '25vw',
+      contentStyle: { overflow: 'auto' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      }
+    });
+
+    this.ref.onClose.subscribe((data: any) => {
+      if (!data) {
+        this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: "aaaa" });
+      }
+
+    });
+
+    this.ref.onMaximize.subscribe((value) => {
+
+      this.messageService.add({ severity: 'info', summary: 'Maximized', detail: `maximized: ${value.maximized}` });
+    });
   }
 
   public showDialog(employeeFio: string, recordingTime: string): void {
@@ -126,6 +165,8 @@ export class TimetableComponent {
 
   }
 
+
+
   public saveChanges(): void {
     this.visibleRedactAppointment = false;
     this.closeMask();
@@ -179,9 +220,6 @@ export class TimetableComponent {
 
   public closeMask(): void {
     const overlayMasks = document.querySelectorAll<HTMLElement>('.p-dialog-mask');
-    // if (overlayMask) {
-    //   overlayMask.style.visibility = "hidden";
-    // }
     overlayMasks.forEach(overlayMask => {
       overlayMask.style.visibility = "hidden";
     });

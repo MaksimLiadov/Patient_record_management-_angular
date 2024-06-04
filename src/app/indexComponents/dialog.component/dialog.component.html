@@ -1,0 +1,23 @@
+<div class="dialog">
+    <span class="p-text-secondary block mb-5">Запись к {{employeeFio}} на {{recordingTime}}</span>
+    <div class="input-fields-container">
+        <div class="input-field">
+            <label for="username" class="font-semibold w-6rem">ФИО</label>
+            <input class="input-text" type="text" pInputText [(ngModel)]="userFio" placeholder="Ваше ФИО" />
+        </div>
+        <div class="input-field">
+            <label for="usergender" class="font-semibold w-6rem">Пол</label>
+            <p-dropdown class="input-dropdown" id="usergender" [options]="genders" [(ngModel)]="userGender"
+                placeholder="Ваш пол" />
+        </div>
+        <div class="input-field">
+            <label for="userage" class="font-semibold w-6rem">Возраст</label>
+            <p-inputNumber class="input-number" id="userage" [(ngModel)]="userAge" mode="decimal" [showButtons]="true"
+                inputId="minmax-buttons" [min]="0" [max]="100" placeholder="Ваш возраст" />
+        </div>
+    </div>
+    <div class="buttons">
+        <p-button label="Отменить" severity="secondary" (click)="closeDialog()" />
+        <p-button pRipple label="Сохранить" (click)="saveAppointment()" />
+    </div>
+</div>

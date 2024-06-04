@@ -1,0 +1,31 @@
+.dialog {
+    &>.input-fields-container {
+        margin-top: 13px;
+        margin-bottom: 13px;
+        width: 300px;
+
+        &>.input-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+
+            &>.input-text {
+                width: 75%;
+            }
+
+            &>.input-dropdown {
+                width: 75%;
+            }
+
+            &>.input-number {
+                width: 75%;
+            }
+        }
+    }
+
+    &>.buttons * {
+        margin-right: 7px;
+    }
+
+}
