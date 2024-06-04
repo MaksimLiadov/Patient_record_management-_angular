@@ -23,42 +23,15 @@ export class LocalStorageService {
     }
     public addRecordToLocaleStorage(employeeFio: string, userFio: string, date: Date, time: string, age: number, gender: string): void {
         let dateStr = this.toDateStr(date);
-        let localStorageObj = this.getLocalStorageData();
+        let localStorageObj = this.getLocalStorageData() || {};
 
-        if (!localStorageObj) {
-            localStorageObj = {};
-            localStorageObj[employeeFio] = {};
-            localStorageObj[employeeFio][dateStr] = {}
-            localStorageObj[employeeFio][dateStr][userFio] = {
-                time: time,
-                age: age,
-                gender: gender
-            };
-        }
-        else if (!localStorageObj[employeeFio]) {
-            localStorageObj[employeeFio] = {};
-            localStorageObj[employeeFio][dateStr] = {}
-            localStorageObj[employeeFio][dateStr][userFio] = {
-                time: time,
-                age: age,
-                gender: gender
-            };
-        }
-        else if (!localStorageObj[employeeFio][dateStr]) {
-            localStorageObj[employeeFio][dateStr] = {}
-            localStorageObj[employeeFio][dateStr][userFio] = {
-                time: time,
-                age: age,
-                gender: gender
-            };
-        }
-        else if (!localStorageObj[employeeFio][userFio]) {
-            localStorageObj[employeeFio][dateStr][userFio] = {
-                time: time,
-                age: age,
-                gender: gender
-            };
-        }
+        localStorageObj[employeeFio] = localStorageObj[employeeFio] || {};
+        localStorageObj[employeeFio][dateStr] = localStorageObj[employeeFio][dateStr] || {};
+        localStorageObj[employeeFio][dateStr][userFio] = {
+            time: time,
+            age: age,
+            gender: gender
+        };
 
         localStorage.setItem('Все записи', JSON.stringify(localStorageObj));
     }
