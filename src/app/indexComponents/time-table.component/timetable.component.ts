@@ -1,8 +1,10 @@
 import { NgClass, NgFor, DatePipe } from "@angular/common";
 import { Component, Input, SimpleChanges, ViewChildren, QueryList, ElementRef } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { LocalStorageService } from "src/app/local-storage.service"
-import { IWorker } from "src/app/employee-time-table-struct"
+import { LocalStorageService } from "src/app/services/local-storage.service"
+import { EmployeeDataService } from "src/app/services/employee-data.service"
+import { IWorker } from "src/app/data-models/employee-time-table-struct"
+import { IDialogData } from "src/app/data-models/dialog-data-sctruct"
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -13,12 +15,13 @@ import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { DynamicDialogContent } from "../dialog.component/dialog.component"
+import { EditDynamicDialogContent } from "../edit-dialog.component/edit-dialog.component"
 
 @Component({
   selector: 'timetable',
   standalone: true,
   imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, DynamicDialogModule, FormsModule, ButtonModule, InputNumberModule],
-  providers: [LocalStorageService, MessageService, DialogService],
+  providers: [LocalStorageService, EmployeeDataService, MessageService, DialogService],
   templateUrl: 'timetable.component.html',
   styleUrl: './timetable.component.scss'
 })
@@ -28,15 +31,12 @@ export class TimetableComponent {
   @Input() isEmployeeAdded: boolean;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
-  constructor(private localStorageService: LocalStorageService, private messageService: MessageService, public dialogService: DialogService) { }
+  constructor(private localStorageService: LocalStorageService, private employeeDataService: EmployeeDataService, private messageService: MessageService, public dialogService: DialogService) { }
 
   ref: DynamicDialogRef | undefined;
 
   public employeeFio: string = "";
   public recordingTime: string = "";
-
-  public visibleMakeAppointment: boolean = false;
-  public visibleRedactAppointment: boolean = false;
 
   public userFioForRedact: string;
   public userOldFioForRedact: string;
@@ -51,33 +51,53 @@ export class TimetableComponent {
   public genders: string[] = ["Женский", "Мужской"]
 
   ngOnChanges(changes: SimpleChanges) {
-
     if (changes.date && this.dateElements != undefined) {
       this.dateChange(this.date);
     }
-
     if ((changes.isEmployeeAdded) || (changes.fio)) {
       if (this.isEmployeeAdded) {
-        let schedule = this.localStorageService.getISchedule(this.fio, this.date);
+        let schedule = this.employeeDataService.getISchedule(this.fio, this.date);
 
-        this.localStorageService.addEmployeeTimeTable(this.fio, this.date, schedule);
-        this.employeeTimeTableArr = this.localStorageService.getEmployeeTimeTableArr();
+        this.employeeDataService.addEmployeeTimeTable(this.fio, this.date, schedule);
+        this.employeeTimeTableArr = this.employeeDataService.getEmployeeTimeTableArr();
       }
       else {
-        this.localStorageService.removeEmployeeTimeTable(this.fio);
-        this.employeeTimeTableArr = this.localStorageService.getEmployeeTimeTableArr();
+        this.employeeDataService.removeEmployeeTimeTable(this.fio);
+        this.employeeTimeTableArr = this.employeeDataService.getEmployeeTimeTableArr();
       }
     }
   }
 
   ngOnDestroy() {
-
     if (this.ref) {
       this.ref.close();
     }
   }
 
-  public showDinamicDialog(employeeFio: string, recordingTime: string): void {
+  public showDynamicDialog(employeeFio: string, recordingTime: string): void {
+    this.employeeTimeTableArr = this.employeeDataService.getEmployeeTimeTableArr();
+    for (let i = 0; i < this.employeeTimeTableArr.length; i++) {
+      if (this.employeeTimeTableArr[i].fio == employeeFio) {
+        for (let schedule of this.employeeTimeTableArr[i].schedules) {
+          if (schedule.time == recordingTime) {
+            if (schedule.isFree) {
+              this.showAppointmentDialog(employeeFio, recordingTime);
+            }
+            else {
+              this.userFioForRedact = schedule.name;
+              this.userOldFioForRedact = schedule.name;
+              this.ageForRedact = schedule.age;
+              this.genderForRedact = schedule.gender;
+              this.showEditDialog(employeeFio, recordingTime);
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+  public showAppointmentDialog(employeeFio: string, recordingTime: string): void {
     this.ref = this.dialogService.open(DynamicDialogContent, {
       data: {
         employeeFio: employeeFio,
@@ -92,150 +112,88 @@ export class TimetableComponent {
       }
     });
 
-    this.ref.onClose.subscribe((data: any) => {
-      if (!data) {
-        this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: "aaaa" });
+    this.ref.onClose.subscribe((data: IDialogData) => {
+      if (data) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы записались.' });
+        let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+        for (let worker of this.employeeTimeTableArr) {
+          if (worker == iWorker) {
+            for (let schedule of worker.schedules) {
+              if (schedule.time == recordingTime) {
+                schedule.name = data.userFio;
+                schedule.isFree = false;
+                schedule.age = data.userAge;
+                schedule.gender = data.userGender;
+                this.localStorageService.addRecordToLocaleStorage(employeeFio, data.userFio, this.date, recordingTime, data.userAge, data.userGender);
+              }
+            }
+          }
+        }
       }
+    });
+  }
 
+  public showEditDialog(employeeFio: string, recordingTime: string): void {
+
+    this.ref = this.dialogService.open(EditDynamicDialogContent, {
+      data: {
+        employeeFio: employeeFio,
+        recordingTime: recordingTime,
+        userFioForRedact: this.userFioForRedact,
+        ageForRedact: this.ageForRedact,
+        genderForRedact: this.genderForRedact
+      },
+      header: 'Запись на прием',
+      width: '25vw',
+      contentStyle: { overflow: 'auto' },
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      }
     });
 
-    this.ref.onMaximize.subscribe((value) => {
+    this.ref.onClose.subscribe((data: IDialogData) => {
+      if (data) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы изменили данные.' });
+        this.localStorageService.saveChangesInLocalStorage(employeeFio, this.date, data.userFio, this.userOldFioForRedact, data.userGender, data.userAge, recordingTime);
+        let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
 
-      this.messageService.add({ severity: 'info', summary: 'Maximized', detail: `maximized: ${value.maximized}` });
+        for (let worker of this.employeeTimeTableArr) {
+          if (worker == iWorker) {
+            for (let schedule of worker.schedules) {
+              if (schedule.time == recordingTime) {
+                schedule.name = data.userFio;
+                schedule.age = data.userAge;
+                schedule.gender = data.userGender;
+              }
+            }
+          }
+        }
+      }
+      else {
+        this.localStorageService.deleteRecordFromLocalStorage(employeeFio, this.date, this.userFioForRedact);
+        let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+
+        for (let worker of this.employeeTimeTableArr) {
+          if (worker == iWorker) {
+            for (let schedule of worker.schedules) {
+              if (schedule.time == recordingTime) {
+                schedule.name = "";
+                schedule.age = null;
+                schedule.gender = "";
+                schedule.isFree = true;
+              }
+            }
+          }
+        }
+      }
     });
-  }
-
-  public showDialog(employeeFio: string, recordingTime: string): void {
-    this.employeeTimeTableArr = this.localStorageService.getEmployeeTimeTableArr();
-    for (let i = 0; i < this.employeeTimeTableArr.length; i++) {
-      if (this.employeeTimeTableArr[i].fio == employeeFio) {
-        for (let schedule of this.employeeTimeTableArr[i].schedules) {
-          if (schedule.time == recordingTime) {
-            if (schedule.isFree) {
-
-              this.employeeFio = employeeFio;
-              this.recordingTime = recordingTime;
-              this.visibleMakeAppointment = true;
-              this.makeVisible1Mask();
-            }
-            else {
-              this.employeeFio = employeeFio;
-              this.recordingTime = recordingTime;
-              this.userFioForRedact = schedule.name;
-              this.userOldFioForRedact = schedule.name;
-              this.ageForRedact = schedule.age;
-              this.genderForRedact = schedule.gender;
-
-              this.visibleRedactAppointment = true;
-              this.makeVisible2Mask();
-            }
-          }
-
-        }
-      }
-    }
-  }
-
-  public saveAppointment(): void {
-    if (this.userFio != "" && this.age != null && this.gender != '') {
-      this.visibleMakeAppointment = false;
-      this.closeMask();
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы записались.' });
-
-      let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === this.employeeFio);
-
-      for (let worker of this.employeeTimeTableArr) {
-        if (worker == iWorker) {
-          for (let schedule of worker.schedules) {
-            if (schedule.time == this.recordingTime) {
-              schedule.name = this.userFio;
-              schedule.isFree = false;
-              schedule.age = this.age;
-              schedule.gender = this.gender;
-              this.localStorageService.addRecordToLocaleStorage(this.employeeFio, this.userFio, this.date, this.recordingTime, this.age, this.gender);
-              this.userFio = "";
-              this.gender = "";
-              this.age = null;
-            }
-          }
-        }
-      }
-    }
-    else this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Вы не заполнили все поля.' });
-
-  }
-
-
-
-  public saveChanges(): void {
-    this.visibleRedactAppointment = false;
-    this.closeMask();
-    this.localStorageService.saveChangesInLocalStorage(this.employeeFio, this.date, this.userFioForRedact, this.userOldFioForRedact, this.genderForRedact, this.ageForRedact, this.recordingTime);
-    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === this.employeeFio);
-
-    for (let worker of this.employeeTimeTableArr) {
-      if (worker == iWorker) {
-        for (let schedule of worker.schedules) {
-          if (schedule.time == this.recordingTime) {
-            schedule.name = this.userFioForRedact;
-            schedule.age = this.ageForRedact;
-            schedule.gender = this.genderForRedact;
-          }
-        }
-      }
-    }
-  }
-
-  public deleteAppointment(): void {
-    this.visibleRedactAppointment = false;
-    this.closeMask();
-    this.localStorageService.deleteRecordFromLocalStorage(this.employeeFio, this.date, this.userFioForRedact);
-    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === this.employeeFio);
-
-    for (let worker of this.employeeTimeTableArr) {
-      if (worker == iWorker) {
-        for (let schedule of worker.schedules) {
-          if (schedule.time == this.recordingTime) {
-            schedule.name = "";
-            schedule.age = null;
-            schedule.gender = "";
-            schedule.isFree = true;
-          }
-        }
-      }
-    }
   }
 
   public dateChange(date: Date): void {
     this.employeeTimeTableArr.forEach(timeTable => {
       timeTable.date = date;
-      timeTable.schedules = this.localStorageService.getISchedule(timeTable.fio, this.date);
+      timeTable.schedules = this.employeeDataService.getISchedule(timeTable.fio, this.date);
     });
-  }
-
-  public dialogClose(): void {
-    this.visibleMakeAppointment = false;
-    this.closeMask();
-  }
-
-  public closeMask(): void {
-    const overlayMasks = document.querySelectorAll<HTMLElement>('.p-dialog-mask');
-    overlayMasks.forEach(overlayMask => {
-      overlayMask.style.visibility = "hidden";
-    });
-  }
-
-  public makeVisible1Mask(): void {
-    const overlayMask = document.querySelectorAll<HTMLElement>('.p-dialog-mask');
-    if (overlayMask) {
-      overlayMask[0].style.visibility = "visible";
-    }
-  }
-
-  public makeVisible2Mask(): void {
-    const overlayMask = document.querySelectorAll<HTMLElement>('.p-dialog-mask');
-    if (overlayMask) {
-      overlayMask[1].style.visibility = "visible";
-    }
   }
 }

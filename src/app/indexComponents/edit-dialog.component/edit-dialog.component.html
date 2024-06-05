@@ -3,22 +3,22 @@
     <div class="input-fields-container">
         <div class="input-field">
             <label for="username" class="font-semibold w-6rem">ФИО</label>
-            <input class="input-text" type="text" pInputText [(ngModel)]="userFio" placeholder="Ваше ФИО" />
+            <input class="input-text" type="text" pInputText [(ngModel)]="userFioForRedact" placeholder="Ваше ФИО" />
         </div>
         <div class="input-field">
             <label for="usergender" class="font-semibold w-6rem">Пол</label>
-            <p-dropdown class="input-dropdown" id="usergender" [options]="genders" [(ngModel)]="userGender"
+            <p-dropdown class="input-dropdown" id="usergender" [options]="genders" [(ngModel)]="genderForRedact"
                 placeholder="Ваш пол" />
         </div>
         <div class="input-field">
             <label for="userage" class="font-semibold w-6rem">Возраст</label>
-            <p-inputNumber class="input-number" id="userage" [(ngModel)]="userAge" mode="decimal" [showButtons]="true"
-                inputId="minmax-buttons" [min]="0" [max]="100" placeholder="Ваш возраст" />
+            <p-inputNumber class="input-number" id="userage" [(ngModel)]="ageForRedact" mode="decimal"
+                [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100" placeholder="Ваш возраст" />
         </div>
     </div>
     <div class="buttons">
-        <p-button label="Отменить" severity="secondary" (click)="closeDialog()" />
+        <p-button label="Удалить" severity="secondary" (click)="closeDialog()" />
         <p-button pRipple label="Сохранить"
-            (click)="saveAppointment({userFio: userFio, userAge:userAge, userGender:userGender})" />
+            (click)="saveChanges({userFio: userFioForRedact, userAge:ageForRedact, userGender:genderForRedact})" />
     </div>
 </div>

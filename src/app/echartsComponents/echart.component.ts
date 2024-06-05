@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import type { EChartsOption } from 'echarts';
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
 import { Router, RouterOutlet } from "@angular/router";
-import { LocalStorageService } from "src/app/local-storage.service"
+import { LocalStorageService } from "src/app/services/local-storage.service"
 
 @Component({
     selector: 'echart',
@@ -29,7 +29,6 @@ export class EchartComponent implements OnInit {
         this.fillOneDayChartOptions();
         this.fillWeekChartOptions();
     }
-
 
     toMain() {
         this.router.navigate([""]);
@@ -122,7 +121,6 @@ export class EchartComponent implements OnInit {
                 }
             }
         }
-
 
         let numberAppointment = [];
         for (let day in countDayOfWeek) {

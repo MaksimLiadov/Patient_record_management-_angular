@@ -13,15 +13,15 @@ import { DropdownModule } from 'primeng/dropdown';
     providers: [DialogService, MessageService],
     standalone: true,
     imports: [TableModule, ButtonModule, FormsModule, InputTextModule, InputNumberModule, DropdownModule],
-    templateUrl: './dialog.component.html',
-    styleUrl: './dialog.component.scss'
+    templateUrl: './edit-dialog.component.html',
+    styleUrl: './edit-dialog.component.scss'
 })
-export class DynamicDialogContent implements OnInit {
+export class EditDynamicDialogContent implements OnInit {
     constructor(private dialogService: DialogService, private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig) { };
 
-    public userFio: string = "";
-    public userAge: number = null;
-    public userGender: string = "";
+    public userFioForRedact: string;
+    public ageForRedact: number;
+    public genderForRedact: string;
 
     public employeeFio: string;
     public recordingTime: string;
@@ -30,13 +30,17 @@ export class DynamicDialogContent implements OnInit {
     ngOnInit(): void {
         this.employeeFio = this.config.data.employeeFio;
         this.recordingTime = this.config.data.recordingTime;
+
+        this.userFioForRedact = this.config.data.userFioForRedact;
+        this.ageForRedact = this.config.data.ageForRedact;
+        this.genderForRedact = this.config.data.genderForRedact;
     }
 
     closeDialog() {
         this.dialogRef.close();
     }
 
-    saveAppointment(data) {
+    saveChanges(data) {
         this.dialogRef.close(data);
     }
 }

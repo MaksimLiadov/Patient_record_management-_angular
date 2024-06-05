@@ -5,7 +5,7 @@ export interface IWorker {
 }
 
 export interface ISchedule {
-    age: number;
+    age: number | null;
     gender: string;
     time: string;
     isFree: boolean;
