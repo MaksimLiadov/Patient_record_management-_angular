@@ -27,17 +27,8 @@ export class EmployeeDataService {
         }
     }
 
-    private toDateStr(date: Date): string {
-
-        let dd = String(date.getDate()).padStart(2, '0');
-        let mm = String(date.getMonth() + 1).padStart(2, '0');
-        let yyyy = date.getFullYear();
-
-        let dateStr = dd + '.' + mm + '.' + yyyy;
-        return dateStr
-    }
     public getISchedule(fio: string, date: Date): ISchedule[] {
-        let dateStr = this.toDateStr(date);
+        let dateStr = date.toString();
         let scheduleArr: ISchedule[] = [];
         let localStorageData = this.localStorageService.getLocalStorageData();
         let isFullFree: boolean = true;

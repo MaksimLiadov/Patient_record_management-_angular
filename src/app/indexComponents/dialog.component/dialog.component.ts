@@ -32,11 +32,11 @@ export class DynamicDialogContent implements OnInit {
         this.recordingTime = this.config.data.recordingTime;
     }
 
-    closeDialog() {
+    public closeDialog() {
         this.dialogRef.close();
     }
 
-    saveAppointment(data) {
+    public saveAppointment(data) {
         this.dialogRef.close(data);
     }
 }

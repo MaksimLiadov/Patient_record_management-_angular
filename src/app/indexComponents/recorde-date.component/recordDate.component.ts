@@ -15,13 +15,15 @@ export class RecordDateComponent implements OnInit, DoCheck {
 
     @Output() onDateChange = new EventEmitter<Date>();
 
-    //Вызывается несколько раз, onChange не работает
     ngDoCheck(): void {
         this.onDateChange.emit(this.currentDate);
     }
 
     ngOnInit() {
         let defaultDate = new Date();
+        defaultDate.setHours(0);
+        defaultDate.setMinutes(0);
+        defaultDate.setSeconds(0);
         this.currentDate = defaultDate;
         this.onDateChange.emit(defaultDate);
     }

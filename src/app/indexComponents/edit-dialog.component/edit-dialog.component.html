@@ -17,8 +17,8 @@
         </div>
     </div>
     <div class="buttons">
-        <p-button label="Удалить" severity="secondary" (click)="closeDialog()" />
+        <p-button label="Удалить" severity="secondary" (click)="deleteRecord({buttonType: 'delete'})" />
         <p-button pRipple label="Сохранить"
-            (click)="saveChanges({userFio: userFioForRedact, userAge:ageForRedact, userGender:genderForRedact})" />
+            (click)="saveChanges({userFio: userFioForRedact, userAge:ageForRedact, userGender:genderForRedact,  buttonType: 'save'})" />
     </div>
 </div>

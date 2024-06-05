@@ -2,7 +2,7 @@
     &>.input-fields-container {
         margin-top: 13px;
         margin-bottom: 13px;
-        width: 300px;
+        width: 100%;
 
         &>.input-field {
             display: flex;
@@ -11,15 +11,7 @@
             margin-bottom: 3px;
 
             &>.input-text {
-                width: 75%;
-            }
-
-            &>.input-dropdown {
-                width: 75%;
-            }
-
-            &>.input-number {
-                width: 75%;
+                width: 298px;
             }
         }
     }
@@ -28,4 +20,8 @@
         margin-right: 7px;
     }
 
+}
+
+:host ::ng-deep .p-dropdown {
+    width: 298px;
 }

@@ -35,9 +35,6 @@ export class TimetableComponent {
 
   ref: DynamicDialogRef | undefined;
 
-  public employeeFio: string = "";
-  public recordingTime: string = "";
-
   public userFioForRedact: string;
   public userOldFioForRedact: string;
   public ageForRedact: number;
@@ -51,6 +48,10 @@ export class TimetableComponent {
   public genders: string[] = ["Женский", "Мужской"]
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.date) {
+      console.log("dateChange " + this.date);
+
+    }
     if (changes.date && this.dateElements != undefined) {
       this.dateChange(this.date);
     }
@@ -104,7 +105,7 @@ export class TimetableComponent {
         recordingTime: recordingTime
       },
       header: 'Запись на прием',
-      width: '25vw',
+      width: '22vw',
       contentStyle: { overflow: 'auto' },
       breakpoints: {
         '960px': '75vw',
@@ -144,7 +145,7 @@ export class TimetableComponent {
         genderForRedact: this.genderForRedact
       },
       header: 'Запись на прием',
-      width: '25vw',
+      width: '22vw',
       contentStyle: { overflow: 'auto' },
       breakpoints: {
         '960px': '75vw',
@@ -152,8 +153,8 @@ export class TimetableComponent {
       }
     });
 
-    this.ref.onClose.subscribe((data: IDialogData) => {
-      if (data) {
+    this.ref.onClose.subscribe((data: any) => {
+      if (data.buttonType == 'Save') {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы изменили данные.' });
         this.localStorageService.saveChangesInLocalStorage(employeeFio, this.date, data.userFio, this.userOldFioForRedact, data.userGender, data.userAge, recordingTime);
         let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
