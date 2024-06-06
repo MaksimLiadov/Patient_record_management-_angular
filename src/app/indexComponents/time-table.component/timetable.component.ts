@@ -1,12 +1,14 @@
 import { NgClass, NgFor, DatePipe } from "@angular/common";
-import { Component, Input, SimpleChanges, ViewChildren, QueryList, ElementRef } from "@angular/core";
+import { Component, Input, SimpleChanges, ViewChildren, QueryList, ElementRef, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LocalStorageService } from "src/app/services/local-storage.service"
-import { EmployeeDataService } from "src/app/services/employee-data.service"
+import { EmployeeRecordsDataService } from "src/app/services/employee-records-data.service"
+import { EmployeeListService } from "src/app/services/employee-list.service"
 import { IWorker } from "src/app/data-models/employee-time-table-struct"
 import { IAppointmentDialogData } from "src/app/data-models/dialog-data-sctruct"
 import { IRecord } from "src/app/data-models/record-data-struct"
 import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
+import { IEmployee } from "src/app/data-models/employee-struct"
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -22,17 +24,17 @@ import { DynamicDialogContent } from "../appointment-dialog.component/appointmen
   selector: 'timetable',
   standalone: true,
   imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, DynamicDialogModule, FormsModule, ButtonModule, InputNumberModule],
-  providers: [LocalStorageService, EmployeeDataService, MessageService, DialogService],
+  providers: [LocalStorageService, EmployeeRecordsDataService, MessageService, DialogService, EmployeeListService],
   templateUrl: 'timetable.component.html',
   styleUrl: './timetable.component.scss'
 })
-export class TimetableComponent {
+export class TimetableComponent implements OnInit {
   @Input() fio: string;
   @Input() date: Date;
   @Input() isEmployeeAdded: boolean;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
-  constructor(private localStorageService: LocalStorageService, private employeeDataService: EmployeeDataService, public dialogService: DialogService) { }
+  constructor(private localStorageService: LocalStorageService, private employeeDataService: EmployeeRecordsDataService, public dialogService: DialogService) { }
 
   ref: DynamicDialogRef | undefined;
 
@@ -47,6 +49,12 @@ export class TimetableComponent {
 
   public employeeTimeTableArr: IWorker[] = [];
   public genders: string[] = ["Женский", "Мужской"]
+
+  ngOnInit(): void {
+    // let employeeArr: IEmployee[] = [{ name: "Работник 1", isAdded: false }, { name: "Работник 2", isAdded: false },
+    // { name: "Работник 3", isAdded: false }, { name: "Работник 4", isAdded: false }, { name: "Работник 5", isAdded: false },]
+    // this.localStorageService.addToLocaleStorage("employeeArr", employeeArr);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.date && this.dateElements != undefined) {

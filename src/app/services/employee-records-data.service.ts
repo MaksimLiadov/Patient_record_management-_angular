@@ -5,7 +5,7 @@ import { IRecord } from "src/app/data-models/record-data-struct"
 import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
 
 @Injectable()
-export class EmployeeDataService {
+export class EmployeeRecordsDataService {
 
     private employeeTimeTableArr: IWorker[] = [];
 
