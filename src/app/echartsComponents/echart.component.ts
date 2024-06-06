@@ -37,14 +37,18 @@ export class EchartComponent implements OnInit {
     fillOneDayChartOptions() {
         let localStorageData = this.localStorageService.getLocalStorageData();
         const today = new Date();
-        const formattedToday = this.datePipe.transform(today, 'dd.MM.yyyy');
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+
+        let todayStr = today.toString();
 
         let workersArr = [];
         let numberRecords = [];
         for (let worker in localStorageData) {
             workersArr.push(worker);
             for (let dateRecord in localStorageData[worker]) {
-                if (dateRecord == formattedToday) {
+                if (dateRecord == todayStr) {
                     let count: number = 0;
                     for (let user in localStorageData[worker][dateRecord]) {
                         count++;
@@ -90,35 +94,41 @@ export class EchartComponent implements OnInit {
         }
 
         for (let worker in localStorageData) {
+            console.log("worker: " + worker);
+
             for (let dateRecord in localStorageData[worker]) {
 
-                const [day, month, year] = dateRecord.split(".").map(Number);
-                const today = new Date(year, month - 1, day);
-                const dayOfWeek = today.getDay();
+                for (let records in localStorageData[worker][dateRecord]) {
+                    const today = new Date(dateRecord);
+                    const dayOfWeek = today.getDay();
+                    console.log("day of week" + dayOfWeek);
 
-                switch (dayOfWeek) {
-                    case 0:
-                        countDayOfWeek.sunday += 1;
-                        break;
-                    case 1:
-                        countDayOfWeek.monday += 1;
-                        break;
-                    case 2:
-                        countDayOfWeek.tuesday += 1;
-                        break;
-                    case 3:
-                        countDayOfWeek.wednesday += 1;
-                        break;
-                    case 4:
-                        countDayOfWeek.thursday += 1;
-                        break;
-                    case 5:
-                        countDayOfWeek.friday += 1;
-                        break;
-                    case 6:
-                        countDayOfWeek.saturday += 1;
-                        break;
+
+                    switch (dayOfWeek) {
+                        case 0:
+                            countDayOfWeek.sunday += 1;
+                            break;
+                        case 1:
+                            countDayOfWeek.monday += 1;
+                            break;
+                        case 2:
+                            countDayOfWeek.tuesday += 1;
+                            break;
+                        case 3:
+                            countDayOfWeek.wednesday += 1;
+                            break;
+                        case 4:
+                            countDayOfWeek.thursday += 1;
+                            break;
+                        case 5:
+                            countDayOfWeek.friday += 1;
+                            break;
+                        case 6:
+                            countDayOfWeek.saturday += 1;
+                            break;
+                    }
                 }
+
             }
         }
 
