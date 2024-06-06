@@ -16,9 +16,15 @@
                 inputId="minmax-buttons" [min]="0" [max]="100" placeholder="Ваш возраст" />
         </div>
     </div>
-    <div class="buttons">
+    <div class="buttons" *ngIf="!isEdit;else edit">
         <p-button label="Отменить" severity="secondary" (click)="closeDialog()" />
         <p-button pRipple label="Сохранить"
-            (click)="saveAppointment({userFio: userFio, userAge:userAge, userGender:userGender})" />
+            (click)="saveAppointment({userFio: userFio, userAge:userAge, userGender:userGender, buttonType: 'appointment'})" />
     </div>
+    <ng-template #edit>
+        <p-button label="Удалить" severity="secondary"
+            (click)="deleteRecord({userFio: userFio, buttonType: 'delete'})" />
+        <p-button pRipple label="Сохранить"
+            (click)="saveChanges({userFio: userFio, userAge:userAge, userGender:userGender,  buttonType: 'saveChanges'})" />
+    </ng-template>
 </div>

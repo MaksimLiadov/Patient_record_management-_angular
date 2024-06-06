@@ -1,5 +1,6 @@
-export interface IDialogData {
+export interface IAppointmentDialogData {
     userFio: string;
     userAge: number,
-    userGender: string
+    userGender: string,
+    buttonType: string
 }

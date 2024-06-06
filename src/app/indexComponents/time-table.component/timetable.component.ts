@@ -4,7 +4,9 @@ import { FormsModule } from "@angular/forms";
 import { LocalStorageService } from "src/app/services/local-storage.service"
 import { EmployeeDataService } from "src/app/services/employee-data.service"
 import { IWorker } from "src/app/data-models/employee-time-table-struct"
-import { IDialogData } from "src/app/data-models/dialog-data-sctruct"
+import { IAppointmentDialogData } from "src/app/data-models/dialog-data-sctruct"
+import { IRecord } from "src/app/data-models/record-data-struct"
+import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -14,8 +16,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { DynamicDialogContent } from "../dialog.component/dialog.component"
-import { EditDynamicDialogContent } from "../edit-dialog.component/edit-dialog.component"
+import { DynamicDialogContent } from "../appointment-dialog.component/appointment-dialog.component"
 
 @Component({
   selector: 'timetable',
@@ -31,7 +32,7 @@ export class TimetableComponent {
   @Input() isEmployeeAdded: boolean;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
-  constructor(private localStorageService: LocalStorageService, private employeeDataService: EmployeeDataService, private messageService: MessageService, public dialogService: DialogService) { }
+  constructor(private localStorageService: LocalStorageService, private employeeDataService: EmployeeDataService, public dialogService: DialogService) { }
 
   ref: DynamicDialogRef | undefined;
 
@@ -48,10 +49,6 @@ export class TimetableComponent {
   public genders: string[] = ["Женский", "Мужской"]
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.date) {
-      console.log("dateChange " + this.date);
-
-    }
     if (changes.date && this.dateElements != undefined) {
       this.dateChange(this.date);
     }
@@ -72,11 +69,13 @@ export class TimetableComponent {
   ngOnDestroy() {
     if (this.ref) {
       this.ref.close();
+      this.ref.destroy();
     }
   }
 
   public showDynamicDialog(employeeFio: string, recordingTime: string): void {
     this.employeeTimeTableArr = this.employeeDataService.getEmployeeTimeTableArr();
+
     for (let i = 0; i < this.employeeTimeTableArr.length; i++) {
       if (this.employeeTimeTableArr[i].fio == employeeFio) {
         for (let schedule of this.employeeTimeTableArr[i].schedules) {
@@ -89,7 +88,11 @@ export class TimetableComponent {
               this.userOldFioForRedact = schedule.name;
               this.ageForRedact = schedule.age;
               this.genderForRedact = schedule.gender;
-              this.showEditDialog(employeeFio, recordingTime);
+              this.showAppointmentDialog(employeeFio, recordingTime);
+              this.userFioForRedact = "";
+              this.userOldFioForRedact = "";
+              this.ageForRedact = null;
+              this.genderForRedact = "";
             }
           }
 
@@ -102,47 +105,10 @@ export class TimetableComponent {
     this.ref = this.dialogService.open(DynamicDialogContent, {
       data: {
         employeeFio: employeeFio,
-        recordingTime: recordingTime
-      },
-      header: 'Запись на прием',
-      width: '22vw',
-      contentStyle: { overflow: 'auto' },
-      breakpoints: {
-        '960px': '75vw',
-        '640px': '90vw'
-      }
-    });
-
-    this.ref.onClose.subscribe((data: IDialogData) => {
-      if (data) {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы записались.' });
-        let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
-        for (let worker of this.employeeTimeTableArr) {
-          if (worker == iWorker) {
-            for (let schedule of worker.schedules) {
-              if (schedule.time == recordingTime) {
-                schedule.name = data.userFio;
-                schedule.isFree = false;
-                schedule.age = data.userAge;
-                schedule.gender = data.userGender;
-                this.localStorageService.addRecordToLocaleStorage(employeeFio, data.userFio, this.date, recordingTime, data.userAge, data.userGender);
-              }
-            }
-          }
-        }
-      }
-    });
-  }
-
-  public showEditDialog(employeeFio: string, recordingTime: string): void {
-
-    this.ref = this.dialogService.open(EditDynamicDialogContent, {
-      data: {
-        employeeFio: employeeFio,
         recordingTime: recordingTime,
-        userFioForRedact: this.userFioForRedact,
-        ageForRedact: this.ageForRedact,
-        genderForRedact: this.genderForRedact
+        userFio: this.userFioForRedact,
+        userAge: this.ageForRedact,
+        userGender: this.genderForRedact
       },
       header: 'Запись на прием',
       width: '22vw',
@@ -153,42 +119,104 @@ export class TimetableComponent {
       }
     });
 
-    this.ref.onClose.subscribe((data: any) => {
-      if (data.buttonType == 'Save') {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Вы изменили данные.' });
-        this.localStorageService.saveChangesInLocalStorage(employeeFio, this.date, data.userFio, this.userOldFioForRedact, data.userGender, data.userAge, recordingTime);
-        let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+    this.ref.onClose.subscribe((data: IAppointmentDialogData) => {
 
-        for (let worker of this.employeeTimeTableArr) {
-          if (worker == iWorker) {
-            for (let schedule of worker.schedules) {
-              if (schedule.time == recordingTime) {
-                schedule.name = data.userFio;
-                schedule.age = data.userAge;
-                schedule.gender = data.userGender;
-              }
-            }
-          }
+      if (data) {
+        switch (data.buttonType) {
+          case "appointment":
+            this.addRecord(data, employeeFio, recordingTime);
+            break;
+          case "saveChanges":
+            this.saveChanges(data, employeeFio, recordingTime);
+            break;
+          case "delete":
+            this.deleteRecord(data, employeeFio, recordingTime);
+            break;
+          default:
+            this.ref.destroy();
+            break;
         }
       }
       else {
-        this.localStorageService.deleteRecordFromLocalStorage(employeeFio, this.date, this.userFioForRedact);
-        let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+        this.ref.destroy();
+      }
 
-        for (let worker of this.employeeTimeTableArr) {
-          if (worker == iWorker) {
-            for (let schedule of worker.schedules) {
-              if (schedule.time == recordingTime) {
-                schedule.name = "";
-                schedule.age = null;
-                schedule.gender = "";
-                schedule.isFree = true;
-              }
-            }
+    });
+  }
+
+  private addRecord(data: IAppointmentDialogData, employeeFio: string, recordingTime: string): void {
+    let record: IRecord = {
+      employeeFio: employeeFio,
+      userFio: data.userFio,
+      date: this.date,
+      recordingTime: recordingTime,
+      userAge: data.userAge,
+      userGender: data.userGender
+    }
+
+    let employeeRecordsObj: IEmployeeRecordsObj = this.employeeDataService.getEmployeeAllRecordsObj(record);
+    this.localStorageService.addToLocaleStorage("Все записи", employeeRecordsObj);
+
+    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+    for (let worker of this.employeeTimeTableArr) {
+      if (worker == iWorker) {
+        for (let schedule of worker.schedules) {
+          if (schedule.time == recordingTime) {
+            schedule.name = data.userFio;
+            schedule.isFree = false;
+            schedule.age = data.userAge;
+            schedule.gender = data.userGender;
+            this.ref.destroy();
           }
         }
       }
-    });
+    }
+  }
+
+  private saveChanges(data: IAppointmentDialogData, employeeFio: string, recordingTime: string) {
+    let record: IRecord = {
+      employeeFio: employeeFio,
+      userFio: data.userFio,
+      date: this.date,
+      recordingTime: recordingTime,
+      userAge: data.userAge,
+      userGender: data.userGender
+    }
+
+    let changedEmployeeAllRecordsObj: IEmployeeRecordsObj = this.employeeDataService.getChangedEmployeeAllRecordsObj(record, this.userOldFioForRedact);
+    this.localStorageService.addToLocaleStorage("Все записи", changedEmployeeAllRecordsObj)
+
+    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+    for (let worker of this.employeeTimeTableArr) {
+      if (worker == iWorker) {
+        for (let schedule of worker.schedules) {
+          if (schedule.time == recordingTime) {
+            schedule.name = data.userFio;
+            schedule.age = data.userAge;
+            schedule.gender = data.userGender;
+          }
+        }
+      }
+    }
+  }
+
+  private deleteRecord(data: IAppointmentDialogData, employeeFio: string, recordingTime: string): void {
+    let employeeRecordsObj: IEmployeeRecordsObj = this.employeeDataService.deleteEmployeeRecord(employeeFio, this.date, data.userFio);
+    this.localStorageService.addToLocaleStorage("Все записи", employeeRecordsObj);
+
+    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+    for (let worker of this.employeeTimeTableArr) {
+      if (worker == iWorker) {
+        for (let schedule of worker.schedules) {
+          if (schedule.time == recordingTime) {
+            schedule.name = "";
+            schedule.age = null;
+            schedule.gender = "";
+            schedule.isFree = true;
+          }
+        }
+      }
+    }
   }
 
   public dateChange(date: Date): void {

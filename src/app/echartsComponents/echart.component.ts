@@ -35,7 +35,8 @@ export class EchartComponent implements OnInit {
     }
 
     fillOneDayChartOptions() {
-        let localStorageData = this.localStorageService.getLocalStorageData();
+        let key: string = "Все записи";
+        let localStorageData = this.localStorageService.getLocalStorageData(key);
         const today = new Date();
         today.setHours(0);
         today.setMinutes(0);
@@ -81,7 +82,8 @@ export class EchartComponent implements OnInit {
     }
 
     fillWeekChartOptions() {
-        let localStorageData = this.localStorageService.getLocalStorageData();
+        let key: string = "Все записи";
+        let localStorageData = this.localStorageService.getLocalStorageData(key);
 
         let countDayOfWeek = {
             sunday: 0,
@@ -94,15 +96,10 @@ export class EchartComponent implements OnInit {
         }
 
         for (let worker in localStorageData) {
-            console.log("worker: " + worker);
-
             for (let dateRecord in localStorageData[worker]) {
-
                 for (let records in localStorageData[worker][dateRecord]) {
                     const today = new Date(dateRecord);
                     const dayOfWeek = today.getDay();
-                    console.log("day of week" + dayOfWeek);
-
 
                     switch (dayOfWeek) {
                         case 0:
@@ -161,7 +158,8 @@ export class EchartComponent implements OnInit {
     }
 
     fillAllTimeChart() {
-        let localStorageData = this.localStorageService.getLocalStorageData();
+        let key: string = "Все записи";
+        let localStorageData = this.localStorageService.getLocalStorageData(key);
 
         let workersArr = [];
         let numberRecords = [];

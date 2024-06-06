@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { IWorker, ISchedule } from "../data-models/employee-time-table-struct"
 import { LocalStorageService } from "./local-storage.service"
+import { IRecord } from "src/app/data-models/record-data-struct"
+import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
 
 @Injectable()
 export class EmployeeDataService {
@@ -27,10 +29,44 @@ export class EmployeeDataService {
         }
     }
 
+    public getEmployeeAllRecordsObj(record: IRecord): IEmployeeRecordsObj {
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData("Все записи") || {};
+
+        employeeRecordsObj[record.employeeFio] = employeeRecordsObj[record.employeeFio] || {};
+        employeeRecordsObj[record.employeeFio][record.date.toString()] = employeeRecordsObj[record.employeeFio][record.date.toString()] || {};
+        employeeRecordsObj[record.employeeFio][record.date.toString()][record.userFio] = {
+            time: record.recordingTime,
+            age: record.userAge,
+            gender: record.userGender
+        };
+
+        return employeeRecordsObj
+    }
+
+    public getChangedEmployeeAllRecordsObj(record: IRecord, userOldFioForRedact: string) {
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData("Все записи");
+        delete employeeRecordsObj[record.employeeFio][record.date.toString()][userOldFioForRedact];
+        employeeRecordsObj[record.employeeFio][record.date.toString()][record.userFio] = {
+            age: record.userAge,
+            gender: record.userGender,
+            time: record.recordingTime
+        };
+
+        return employeeRecordsObj
+    }
+
+    public deleteEmployeeRecord(employeeFio: string, date: Date, userFio: string) {
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData("Все записи");
+        delete employeeRecordsObj[employeeFio][date.toString()][userFio];
+
+        return employeeRecordsObj
+    }
+
     public getISchedule(fio: string, date: Date): ISchedule[] {
         let dateStr = date.toString();
         let scheduleArr: ISchedule[] = [];
-        let localStorageData = this.localStorageService.getLocalStorageData();
+        let key: string = "Все записи";
+        let localStorageData = this.localStorageService.getLocalStorageData(key);
         let isFullFree: boolean = true;
 
         for (let worker in localStorageData) {

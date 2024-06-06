@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { NgIf } from "@angular/common";
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button';
@@ -10,42 +10,50 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
-    providers: [MessageService],
     standalone: true,
-    imports: [TableModule, ButtonModule, FormsModule, InputTextModule, InputNumberModule, DropdownModule],
-    templateUrl: './edit-dialog.component.html',
-    styleUrl: './edit-dialog.component.scss'
+    imports: [TableModule, ButtonModule, FormsModule, InputTextModule, InputNumberModule, DropdownModule, NgIf],
+    templateUrl: './appointment-dialog.component.html',
+    styleUrl: './appointment-dialog.component.scss'
 })
-export class EditDynamicDialogContent implements OnInit {
+export class DynamicDialogContent implements OnInit {
     constructor(private dialogRef: DynamicDialogRef, private config: DynamicDialogConfig) { };
 
-    public userFioForRedact: string;
-    public ageForRedact: number;
-    public genderForRedact: string;
+    public userFio: string = "";
+    public userAge: number = null;
+    public userGender: string = "";
+    public isEdit: boolean = false;
 
     public employeeFio: string;
     public recordingTime: string;
     public genders: string[] = ["Женский", "Мужской"]
-    public buttonType: string;
 
     ngOnInit(): void {
         this.employeeFio = this.config.data.employeeFio;
         this.recordingTime = this.config.data.recordingTime;
 
-        this.userFioForRedact = this.config.data.userFioForRedact;
-        this.ageForRedact = this.config.data.ageForRedact;
-        this.genderForRedact = this.config.data.genderForRedact;
+        this.userFio = this.config.data.userFio;
+        this.userAge = this.config.data.userAge;
+        this.userGender = this.config.data.userGender;
+        if (this.userFio != undefined && this.userFio != "") this.isEdit = true;
     }
 
     public closeDialog() {
         this.dialogRef.close();
+        this.dialogRef.destroy();
+    }
+
+    public saveAppointment(data) {
+        this.dialogRef.close(data);
+        this.dialogRef.destroy();
     }
 
     public deleteRecord(data) {
         this.dialogRef.close(data);
+        this.dialogRef.destroy();
     }
 
     public saveChanges(data) {
         this.dialogRef.close(data);
+        this.dialogRef.destroy();
     }
 }
