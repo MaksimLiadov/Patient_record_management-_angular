@@ -8,6 +8,7 @@ import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-st
 export class EmployeeRecordsDataService {
 
     private employeeTimeTableArr: IWorker[] = [];
+    private readonly key: string = "Все записи";
 
     constructor(private localStorageService: LocalStorageService) { }
 
@@ -29,9 +30,8 @@ export class EmployeeRecordsDataService {
         }
     }
 
-    public getEmployeeAllRecordsObj(record: IRecord): IEmployeeRecordsObj {
-        let key: string = "Все записи";
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData(key) || {};
+    public add(record: IRecord): void {
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get(this.key) || {};
 
         employeeRecordsObj[record.employeeFio] = employeeRecordsObj[record.employeeFio] || {};
         employeeRecordsObj[record.employeeFio][record.date.toString()] = employeeRecordsObj[record.employeeFio][record.date.toString()] || {};
@@ -41,12 +41,11 @@ export class EmployeeRecordsDataService {
             gender: record.userGender
         };
 
-        return employeeRecordsObj
+        this.localStorageService.add(this.key, employeeRecordsObj);
     }
 
-    public getChangedEmployeeAllRecordsObj(record: IRecord, userOldFioForRedact: string) {
-        let key: string = "Все записи";
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData(key);
+    public change(record: IRecord, userOldFioForRedact: string): void {
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get(this.key);
         delete employeeRecordsObj[record.employeeFio][record.date.toString()][userOldFioForRedact];
         employeeRecordsObj[record.employeeFio][record.date.toString()][record.userFio] = {
             age: record.userAge,
@@ -54,22 +53,20 @@ export class EmployeeRecordsDataService {
             time: record.recordingTime
         };
 
-        return employeeRecordsObj
+        this.localStorageService.add(this.key, employeeRecordsObj)
     }
 
-    public deleteEmployeeRecord(employeeFio: string, date: Date, userFio: string) {
-        let key: string = "Все записи";
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData(key);
+    public delete(employeeFio: string, date: Date, userFio: string): void {
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get(this.key);
         delete employeeRecordsObj[employeeFio][date.toString()][userFio];
 
-        return employeeRecordsObj
+        this.localStorageService.add(this.key, employeeRecordsObj);
     }
 
     public getISchedule(fio: string, date: Date): ISchedule[] {
         let dateStr = date.toString();
-        let scheduleArr: ISchedule[] = [];
-        let key: string = "Все записи";
-        let localStorageData = this.localStorageService.getLocalStorageData(key);
+        let scheduleArr: ISchedule[] = [];;
+        let localStorageData = this.localStorageService.get(this.key);
         let isFullFree: boolean = true;
 
         for (let worker in localStorageData) {

@@ -4,7 +4,7 @@ import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
-
+import { IAppointmentDialogData, ButtonType } from "src/app/data-models/dialog-data-sctruct"
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DropdownModule } from 'primeng/dropdown';
@@ -37,23 +37,33 @@ export class DynamicDialogContent implements OnInit {
         if (this.userFio != undefined && this.userFio != "") this.isEdit = true;
     }
 
-    public closeDialog() {
-        this.dialogRef.close();
-        this.dialogRef.destroy();
-    }
-
-    public saveAppointment(data) {
+    public closeDialog(data?: IAppointmentDialogData) {
         this.dialogRef.close(data);
         this.dialogRef.destroy();
     }
 
-    public deleteRecord(data) {
-        this.dialogRef.close(data);
-        this.dialogRef.destroy();
+    public saveAppointment() {
+        this.closeDialog({
+            userFio: this.userFio,
+            userAge: this.userAge,
+            userGender: this.userGender,
+            buttonType: ButtonType.add
+        });
     }
 
-    public saveChanges(data) {
-        this.dialogRef.close(data);
-        this.dialogRef.destroy();
+    public deleteRecord() {
+        this.closeDialog({
+            userFio: this.userFio,
+            buttonType: ButtonType.delete
+        });
+    }
+
+    public saveChanges() {
+        this.closeDialog({
+            userFio: this.userFio,
+            userAge: this.userAge,
+            userGender: this.userGender,
+            buttonType: ButtonType.change
+        });
     }
 }

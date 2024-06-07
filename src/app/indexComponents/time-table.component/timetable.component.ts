@@ -7,7 +7,6 @@ import { EmployeeListService } from "src/app/services/employee-list.service"
 import { IWorker } from "src/app/data-models/employee-time-table-struct"
 import { IAppointmentDialogData } from "src/app/data-models/dialog-data-sctruct"
 import { IRecord } from "src/app/data-models/record-data-struct"
-import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -32,7 +31,7 @@ export class TimetableComponent implements OnInit {
   @Input() isEmployeeAdded: boolean;
   @ViewChildren('date') dateElements: QueryList<ElementRef>;
 
-  constructor(private localStorageService: LocalStorageService, private employeeDataService: EmployeeRecordsDataService, public dialogService: DialogService) { }
+  constructor(private employeeDataService: EmployeeRecordsDataService, public dialogService: DialogService) { }
 
   ref: DynamicDialogRef | undefined;
 
@@ -101,7 +100,6 @@ export class TimetableComponent implements OnInit {
               this.genderForRedact = "";
             }
           }
-
         }
       }
     }
@@ -126,13 +124,12 @@ export class TimetableComponent implements OnInit {
     });
 
     this.ref.onClose.subscribe((data: IAppointmentDialogData) => {
-
       if (data) {
         switch (data.buttonType) {
-          case "appointment":
+          case "add":
             this.addRecord(data, employeeFio, recordingTime);
             break;
-          case "saveChanges":
+          case "change":
             this.saveChanges(data, employeeFio, recordingTime);
             break;
           case "delete":
@@ -151,78 +148,23 @@ export class TimetableComponent implements OnInit {
   }
 
   private addRecord(data: IAppointmentDialogData, employeeFio: string, recordingTime: string): void {
-    let record: IRecord = {
-      employeeFio: employeeFio,
-      userFio: data.userFio,
-      date: this.date,
-      recordingTime: recordingTime,
-      userAge: data.userAge,
-      userGender: data.userGender
-    }
-    let key: string = "Все записи";
-    let employeeRecordsObj: IEmployeeRecordsObj = this.employeeDataService.getEmployeeAllRecordsObj(record);
-    this.localStorageService.addToLocaleStorage(key, employeeRecordsObj);
+    let record: IRecord = this.getThisRecordObj(data, employeeFio, recordingTime);
+    this.employeeDataService.add(record);
 
-    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
-    for (let worker of this.employeeTimeTableArr) {
-      if (worker == iWorker) {
-        for (let schedule of worker.schedules) {
-          if (schedule.time == recordingTime) {
-            schedule.name = data.userFio;
-            schedule.isFree = false;
-            schedule.age = data.userAge;
-            schedule.gender = data.userGender;
-          }
-        }
-      }
-    }
+    this.changeContent(data, employeeFio, recordingTime);
   }
 
   private saveChanges(data: IAppointmentDialogData, employeeFio: string, recordingTime: string) {
-    let record: IRecord = {
-      employeeFio: employeeFio,
-      userFio: data.userFio,
-      date: this.date,
-      recordingTime: recordingTime,
-      userAge: data.userAge,
-      userGender: data.userGender
-    }
-    let key: string = "Все записи";
-    let changedEmployeeAllRecordsObj: IEmployeeRecordsObj = this.employeeDataService.getChangedEmployeeAllRecordsObj(record, this.userOldFioForRedact);
-    this.localStorageService.addToLocaleStorage(key, changedEmployeeAllRecordsObj)
+    let record: IRecord = this.getThisRecordObj(data, employeeFio, recordingTime);
+    this.employeeDataService.change(record, this.userOldFioForRedact);
 
-    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
-    for (let worker of this.employeeTimeTableArr) {
-      if (worker == iWorker) {
-        for (let schedule of worker.schedules) {
-          if (schedule.time == recordingTime) {
-            schedule.name = data.userFio;
-            schedule.age = data.userAge;
-            schedule.gender = data.userGender;
-          }
-        }
-      }
-    }
+    this.changeContent(data, employeeFio, recordingTime);
   }
 
   private deleteRecord(data: IAppointmentDialogData, employeeFio: string, recordingTime: string): void {
-    let key: string = "Все записи";
-    let employeeRecordsObj: IEmployeeRecordsObj = this.employeeDataService.deleteEmployeeRecord(employeeFio, this.date, data.userFio);
-    this.localStorageService.addToLocaleStorage(key, employeeRecordsObj);
+    this.employeeDataService.delete(employeeFio, this.date, data.userFio);
 
-    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
-    for (let worker of this.employeeTimeTableArr) {
-      if (worker == iWorker) {
-        for (let schedule of worker.schedules) {
-          if (schedule.time == recordingTime) {
-            schedule.name = "";
-            schedule.age = null;
-            schedule.gender = "";
-            schedule.isFree = true;
-          }
-        }
-      }
-    }
+    this.changeContent(data, employeeFio, recordingTime);
   }
 
   public dateChange(date: Date): void {
@@ -230,5 +172,46 @@ export class TimetableComponent implements OnInit {
       timeTable.date = date;
       timeTable.schedules = this.employeeDataService.getISchedule(timeTable.fio, this.date);
     });
+  }
+
+  private changeContent(data: IAppointmentDialogData, employeeFio: string, recordingTime: string,): void {
+    let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
+    for (let worker of this.employeeTimeTableArr) {
+      if (worker == iWorker) {
+        for (let schedule of worker.schedules) {
+          if (schedule.time == recordingTime) {
+            switch (data.buttonType) {
+              case "add":
+              case "change":
+                schedule.name = data.userFio;
+                schedule.isFree = false;
+                schedule.age = data.userAge;
+                schedule.gender = data.userGender;
+                break;
+              case "delete":
+                schedule.name = "";
+                schedule.age = null;
+                schedule.gender = "";
+                schedule.isFree = true;
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private getThisRecordObj(data: IAppointmentDialogData, employeeFio: string, recordingTime: string): IRecord {
+    let record: IRecord = {
+      employeeFio: employeeFio,
+      userFio: data.userFio,
+      date: this.date,
+      recordingTime: recordingTime,
+      userAge: data.userAge,
+      userGender: data.userGender
+    }
+    return record
   }
 }

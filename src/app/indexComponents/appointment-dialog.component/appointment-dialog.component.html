@@ -18,13 +18,12 @@
     </div>
     <div class="buttons" *ngIf="!isEdit;else edit">
         <p-button label="Отменить" severity="secondary" (click)="closeDialog()" />
-        <p-button pRipple label="Сохранить"
-            (click)="saveAppointment({userFio: userFio, userAge:userAge, userGender:userGender, buttonType: 'appointment'})" />
+        <p-button pRipple label="Сохранить" (click)="saveAppointment()" />
     </div>
     <ng-template #edit>
-        <p-button label="Удалить" severity="secondary"
-            (click)="deleteRecord({userFio: userFio, buttonType: 'delete'})" />
-        <p-button pRipple label="Сохранить"
-            (click)="saveChanges({userFio: userFio, userAge:userAge, userGender:userGender,  buttonType: 'saveChanges'})" />
+        <div class="buttons">
+            <p-button label="Удалить" severity="secondary" (click)="deleteRecord()" />
+            <p-button pRipple label="Сохранить" (click)="saveChanges()" />
+        </div>
     </ng-template>
 </div>

@@ -9,7 +9,7 @@ export class EmployeeListService {
 
     constructor(private localStorageService: LocalStorageService) {
         let key: string = "employeeArr";
-        this.employeeArr = this.localStorageService.getLocalStorageData(key);
+        this.employeeArr = this.localStorageService.get(key);
     }
 
     public getEmployeeArr(): IEmployee[] {
