@@ -4,6 +4,7 @@ import type { EChartsOption } from 'echarts';
 import { NgxEchartsDirective, provideEcharts } from 'ngx-echarts';
 import { Router, RouterOutlet } from "@angular/router";
 import { LocalStorageService } from "src/app/services/local-storage.service"
+import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
 
 @Component({
     selector: 'echart',
@@ -24,6 +25,8 @@ export class EchartComponent implements OnInit {
     weekChartOptions: EChartsOption;
     constructor(private datePipe: DatePipe, private router: Router, private localStorageService: LocalStorageService) { }
 
+    public readonly key = "Все записи";
+
     ngOnInit(): void {
         this.fillAllTimeChart();
         this.fillOneDayChartOptions();
@@ -35,8 +38,7 @@ export class EchartComponent implements OnInit {
     }
 
     fillOneDayChartOptions() {
-        let key: string = "Все записи";
-        let localStorageData = this.localStorageService.get(key);
+        let localStorageData = this.localStorageService.get<IEmployeeRecordsObj>(this.key);
         const today = new Date();
         today.setHours(0);
         today.setMinutes(0);
@@ -82,8 +84,7 @@ export class EchartComponent implements OnInit {
     }
 
     fillWeekChartOptions() {
-        let key: string = "Все записи";
-        let localStorageData = this.localStorageService.get(key);
+        let localStorageData = this.localStorageService.get<IEmployeeRecordsObj>(this.key);
 
         let countDayOfWeek = {
             sunday: 0,
@@ -158,7 +159,7 @@ export class EchartComponent implements OnInit {
     }
 
     fillAllTimeChart() {
-        let localStorageData = this.localStorageService.get("Все записи");
+        let localStorageData = this.localStorageService.get<IEmployeeRecordsObj>(this.key);
 
         let workersArr = [];
         let numberRecords = [];

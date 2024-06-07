@@ -31,7 +31,7 @@ export class EmployeeRecordsDataService {
     }
 
     public add(record: IRecord): void {
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get(this.key) || {};
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get<IEmployeeRecordsObj>(this.key) || {};
 
         employeeRecordsObj[record.employeeFio] = employeeRecordsObj[record.employeeFio] || {};
         employeeRecordsObj[record.employeeFio][record.date.toString()] = employeeRecordsObj[record.employeeFio][record.date.toString()] || {};
@@ -41,11 +41,11 @@ export class EmployeeRecordsDataService {
             gender: record.userGender
         };
 
-        this.localStorageService.add(this.key, employeeRecordsObj);
+        this.localStorageService.add<IEmployeeRecordsObj>(this.key, employeeRecordsObj);
     }
 
     public change(record: IRecord, userOldFioForRedact: string): void {
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get(this.key);
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get<IEmployeeRecordsObj>(this.key);
         delete employeeRecordsObj[record.employeeFio][record.date.toString()][userOldFioForRedact];
         employeeRecordsObj[record.employeeFio][record.date.toString()][record.userFio] = {
             age: record.userAge,
@@ -53,20 +53,20 @@ export class EmployeeRecordsDataService {
             time: record.recordingTime
         };
 
-        this.localStorageService.add(this.key, employeeRecordsObj)
+        this.localStorageService.add<IEmployeeRecordsObj>(this.key, employeeRecordsObj)
     }
 
     public delete(employeeFio: string, date: Date, userFio: string): void {
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get(this.key);
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.get<IEmployeeRecordsObj>(this.key);
         delete employeeRecordsObj[employeeFio][date.toString()][userFio];
 
-        this.localStorageService.add(this.key, employeeRecordsObj);
+        this.localStorageService.add<IEmployeeRecordsObj>(this.key, employeeRecordsObj);
     }
 
     public getISchedule(fio: string, date: Date): ISchedule[] {
         let dateStr = date.toString();
         let scheduleArr: ISchedule[] = [];;
-        let localStorageData = this.localStorageService.get(this.key);
+        let localStorageData = this.localStorageService.get<IEmployeeRecordsObj>(this.key);
         let isFullFree: boolean = true;
 
         for (let worker in localStorageData) {

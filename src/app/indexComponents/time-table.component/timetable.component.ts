@@ -143,7 +143,6 @@ export class TimetableComponent implements OnInit {
       else {
         this.ref.destroy();
       }
-
     });
   }
 

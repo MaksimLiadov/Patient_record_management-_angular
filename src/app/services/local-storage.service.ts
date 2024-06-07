@@ -1,12 +1,12 @@
 export class LocalStorageService {
 
-    public add(key: string, data: any): void {
+    public add<T>(key: string, data: T): void {
         localStorage.setItem(key, JSON.stringify(data));
     }
 
-    public get(key: string): any {
+    public get<T>(key: string): T | null {
         let LocalStorageObj = JSON.parse(localStorage.getItem(key));
-        return LocalStorageObj
+        return LocalStorageObj as T
     }
 
 }
