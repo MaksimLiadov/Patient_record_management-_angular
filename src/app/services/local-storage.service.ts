@@ -1,6 +1,6 @@
 export class LocalStorageService {
 
-    public addToLocaleStorage(key: string, data): void {
+    public addToLocaleStorage(key: string, data: any): void {
         localStorage.setItem(key, JSON.stringify(data));
     }
 

@@ -30,7 +30,8 @@ export class EmployeeRecordsDataService {
     }
 
     public getEmployeeAllRecordsObj(record: IRecord): IEmployeeRecordsObj {
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData("Все записи") || {};
+        let key: string = "Все записи";
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData(key) || {};
 
         employeeRecordsObj[record.employeeFio] = employeeRecordsObj[record.employeeFio] || {};
         employeeRecordsObj[record.employeeFio][record.date.toString()] = employeeRecordsObj[record.employeeFio][record.date.toString()] || {};
@@ -44,7 +45,8 @@ export class EmployeeRecordsDataService {
     }
 
     public getChangedEmployeeAllRecordsObj(record: IRecord, userOldFioForRedact: string) {
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData("Все записи");
+        let key: string = "Все записи";
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData(key);
         delete employeeRecordsObj[record.employeeFio][record.date.toString()][userOldFioForRedact];
         employeeRecordsObj[record.employeeFio][record.date.toString()][record.userFio] = {
             age: record.userAge,
@@ -56,7 +58,8 @@ export class EmployeeRecordsDataService {
     }
 
     public deleteEmployeeRecord(employeeFio: string, date: Date, userFio: string) {
-        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData("Все записи");
+        let key: string = "Все записи";
+        let employeeRecordsObj: IEmployeeRecordsObj = this.localStorageService.getLocalStorageData(key);
         delete employeeRecordsObj[employeeFio][date.toString()][userFio];
 
         return employeeRecordsObj

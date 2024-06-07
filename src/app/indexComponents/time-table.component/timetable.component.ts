@@ -8,8 +8,6 @@ import { IWorker } from "src/app/data-models/employee-time-table-struct"
 import { IAppointmentDialogData } from "src/app/data-models/dialog-data-sctruct"
 import { IRecord } from "src/app/data-models/record-data-struct"
 import { IEmployeeRecordsObj } from "src/app/data-models/employee-records-obj-struct"
-import { IEmployee } from "src/app/data-models/employee-struct"
-import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -23,7 +21,7 @@ import { DynamicDialogContent } from "../appointment-dialog.component/appointmen
 @Component({
   selector: 'timetable',
   standalone: true,
-  imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DialogModule, DynamicDialogModule, FormsModule, ButtonModule, InputNumberModule],
+  imports: [ToastModule, RippleModule, NgFor, InputTextModule, DropdownModule, NgClass, DatePipe, DynamicDialogModule, FormsModule, ButtonModule, InputNumberModule],
   providers: [LocalStorageService, EmployeeRecordsDataService, MessageService, DialogService, EmployeeListService],
   templateUrl: 'timetable.component.html',
   styleUrl: './timetable.component.scss'
@@ -161,9 +159,9 @@ export class TimetableComponent implements OnInit {
       userAge: data.userAge,
       userGender: data.userGender
     }
-
+    let key: string = "Все записи";
     let employeeRecordsObj: IEmployeeRecordsObj = this.employeeDataService.getEmployeeAllRecordsObj(record);
-    this.localStorageService.addToLocaleStorage("Все записи", employeeRecordsObj);
+    this.localStorageService.addToLocaleStorage(key, employeeRecordsObj);
 
     let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
     for (let worker of this.employeeTimeTableArr) {
@@ -174,7 +172,6 @@ export class TimetableComponent implements OnInit {
             schedule.isFree = false;
             schedule.age = data.userAge;
             schedule.gender = data.userGender;
-            this.ref.destroy();
           }
         }
       }
@@ -190,9 +187,9 @@ export class TimetableComponent implements OnInit {
       userAge: data.userAge,
       userGender: data.userGender
     }
-
+    let key: string = "Все записи";
     let changedEmployeeAllRecordsObj: IEmployeeRecordsObj = this.employeeDataService.getChangedEmployeeAllRecordsObj(record, this.userOldFioForRedact);
-    this.localStorageService.addToLocaleStorage("Все записи", changedEmployeeAllRecordsObj)
+    this.localStorageService.addToLocaleStorage(key, changedEmployeeAllRecordsObj)
 
     let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
     for (let worker of this.employeeTimeTableArr) {
@@ -209,8 +206,9 @@ export class TimetableComponent implements OnInit {
   }
 
   private deleteRecord(data: IAppointmentDialogData, employeeFio: string, recordingTime: string): void {
+    let key: string = "Все записи";
     let employeeRecordsObj: IEmployeeRecordsObj = this.employeeDataService.deleteEmployeeRecord(employeeFio, this.date, data.userFio);
-    this.localStorageService.addToLocaleStorage("Все записи", employeeRecordsObj);
+    this.localStorageService.addToLocaleStorage(key, employeeRecordsObj);
 
     let iWorker: IWorker = this.employeeTimeTableArr.find(worker => worker.fio === employeeFio);
     for (let worker of this.employeeTimeTableArr) {

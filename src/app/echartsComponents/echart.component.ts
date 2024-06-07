@@ -158,8 +158,7 @@ export class EchartComponent implements OnInit {
     }
 
     fillAllTimeChart() {
-        let key: string = "Все записи";
-        let localStorageData = this.localStorageService.getLocalStorageData(key);
+        let localStorageData = this.localStorageService.getLocalStorageData("Все записи");
 
         let workersArr = [];
         let numberRecords = [];
